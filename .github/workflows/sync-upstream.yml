@@ -178,7 +178,67 @@ jobs:
           else
             git commit -m "Auto-sync from upstream + remove ads/popups
 
-          Automatically synced latest changes from NivinCNC/CNCVerse-Cloud-Stream-Extension
-          and removed ad redirect/popup code."
+            Automatically synced latest changes from NivinCNC/CNCVerse-Cloud-Stream-Extension
+            and removed ad redirect/popup code."
             git push origin HEAD
           fi
+
+      - name: Set up JDK 17
+        if: steps.check_changes.outputs.has_changes == 'true'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Build plugins and plugins.json
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          chmod +x gradlew
+          # Create local.properties so build doesn't complain about SDK
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          ./gradlew make makePluginsJson
+
+      - name: Deploy to builds branch
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          mkdir -p temp-builds
+          find . -name "*.cs3" -not -path "*/temp-builds/*" -exec cp {} temp-builds/ \;
+          cp build/plugins.json temp-builds/
+          
+          # Create CNC.json
+          cat << 'EOF' > temp-builds/CNC.json
+          {
+            "name": "CNC Repo (Clean & Ad-Free)",
+            "iconUrl": "https://raw.githubusercontent.com/Subrata96411/CNCVerse-Cloud-Stream-Extension/builds/cnc.png",
+            "description": "Ad-free & Popup-free CNCVerse CloudStream Extension Repository",
+            "manifestVersion": 1,
+            "pluginLists": [
+              "https://raw.githubusercontent.com/Subrata96411/CNCVerse-Cloud-Stream-Extension/builds/plugins.json"
+            ]
+          }
+          EOF
+          
+          # Try to copy cnc.png if possible
+          curl -sL https://raw.githubusercontent.com/NivinCNC/CNCVerse-Cloud-Stream-Extension/builds/cnc.png -o temp-builds/cnc.png || true
+          
+          # Configure remote builds branch
+          git fetch origin builds || true
+          if git show-ref --quiet refs/remotes/origin/builds; then
+            git checkout builds
+            git pull origin builds
+          else
+            git checkout --orphan builds
+          fi
+          
+          # Remove all tracked files except temp-builds
+          git rm -rf . || true
+          
+          # Move temp files to root
+          mv temp-builds/* .
+          rm -rf temp-builds
+          
+          # Commit and push
+          git add -A
+          git commit -m "Deploy clean builds and repository index" || true
+          git push -f origin builds
+
