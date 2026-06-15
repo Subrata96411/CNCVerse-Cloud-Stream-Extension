@@ -10,7 +10,6 @@ import android.util.Log
 import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import com.lagradost.cloudstream3.ui.settings.Globals.TV
 class HDO : TmdbProvider() {
     override var name = "HDO"
     override val hasMainPage = true

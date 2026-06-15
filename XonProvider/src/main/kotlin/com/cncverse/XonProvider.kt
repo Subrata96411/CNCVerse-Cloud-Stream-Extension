@@ -11,7 +11,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.ConcurrentHashMap
 import com.lagradost.cloudstream3.utils.loadExtractor
-import android.net.Uri
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 class XonProvider : MainAPI() {
     companion object {

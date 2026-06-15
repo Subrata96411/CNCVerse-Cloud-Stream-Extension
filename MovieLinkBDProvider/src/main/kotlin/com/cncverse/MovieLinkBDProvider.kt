@@ -21,7 +21,6 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.Qualities
 import android.content.Context
-import android.net.Uri
 class MovieLinkBDProvider : MainAPI() {
     companion object {
         var appContext: Context? = null

@@ -17,7 +17,6 @@ import javax.crypto.spec.SecretKeySpec
 import android.util.Base64
 import java.net.URI
 import java.security.SecureRandom
-import android.net.Uri
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 class CineTvProvider : MainAPI() {
     companion object {

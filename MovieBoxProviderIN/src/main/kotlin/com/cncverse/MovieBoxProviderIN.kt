@@ -50,7 +50,6 @@ import javax.crypto.spec.SecretKeySpec
 import kotlin.math.max
 import java.security.SecureRandom
 import kotlin.random.Random
-import com.lagradost.cloudstream3.ui.settings.Globals.TV
 class MovieBoxProviderIN : MainAPI() {
     companion object {
         var context: android.content.Context? = null
