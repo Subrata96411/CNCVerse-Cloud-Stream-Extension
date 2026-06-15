@@ -138,8 +138,14 @@ jobs:
               for fname in files:
                   if fname.endswith('.kt'):
                       fpath = os.path.join(root, fname)
-                      with open(fpath, 'r', encoding='utf-8') as f:
-                          content = f.read()
+                      enc = 'utf-8'
+                      try:
+                          with open(fpath, 'r', encoding='utf-8') as f:
+                              content = f.read()
+                      except UnicodeDecodeError:
+                          enc = 'latin-1'
+                          with open(fpath, 'r', encoding='latin-1') as f:
+                              content = f.read()
                       
                       original = content
                       content = remove_functions(content, func_names)
@@ -164,7 +170,7 @@ jobs:
                       content = re.sub(r'\n{4,}', '\n\n\n', content)
                       
                       if content != original:
-                          with open(fpath, 'w', encoding='utf-8') as f:
+                          with open(fpath, 'w', encoding=enc) as f:
                               f.write(content)
                           print(f"Cleaned: {fpath}")
           PYEOF
