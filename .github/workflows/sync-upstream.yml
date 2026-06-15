@@ -1,0 +1,184 @@
+name: Sync from upstream and clean ads
+
+on:
+  schedule:
+    # Run daily at 3:00 AM UTC
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+    # Allow manual triggering
+
+permissions:
+  contents: write
+
+jobs:
+  sync-and-clean:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/NivinCNC/CNCVerse-Cloud-Stream-Extension.git || true
+
+      - name: Fetch upstream
+        run: |
+          git fetch upstream
+
+      - name: Check for new upstream changes
+        id: check_changes
+        run: |
+          LOCAL=$(git rev-parse HEAD)
+          UPSTREAM=$(git rev-parse upstream/master 2>/dev/null || git rev-parse upstream/main 2>/dev/null)
+          if [ "$LOCAL" = "$UPSTREAM" ]; then
+            echo "No new upstream changes"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "New upstream changes detected"
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "upstream_branch=$(git branch -r --list 'upstream/master' | head -1 | xargs)" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Merge upstream changes
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          # Determine the upstream branch name
+          if git rev-parse upstream/master >/dev/null 2>&1; then
+            BRANCH="upstream/master"
+          else
+            BRANCH="upstream/main"
+          fi
+          
+          # Merge upstream changes, preferring upstream on conflicts
+          git merge $BRANCH --no-edit --allow-unrelated-histories || {
+            echo "Merge conflict detected, resolving by accepting upstream changes..."
+            git checkout --theirs .
+            git add .
+            git commit --no-edit -m "Merge upstream changes (auto-resolved conflicts)"
+          }
+
+      - name: Remove ad/popup code
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          echo "Cleaning ad redirect and popup code from all .kt files..."
+          
+          find . -name "*.kt" -not -path "./.git/*" | while read file; do
+            # Remove OMG10 constant
+            sed -i '/private const val OMG10 = "aHR0cHM6Ly9vbWcxMC5jb20vNC8xMTEwNDQ4OQ=="/d' "$file"
+            
+            # Remove lastBrowserOpenMs
+            sed -i '/@Volatile private var lastBrowserOpenMs = 0L/d' "$file"
+            
+            # Remove BROWSER_DEBOUNCE_MS
+            sed -i '/private const val BROWSER_DEBOUNCE_MS = 10_000L/d' "$file"
+            
+            # Remove telegramPopupShown
+            sed -i '/@Volatile private var telegramPopupShown = false/d' "$file"
+            
+            # Remove openInExternalBrowser call line
+            sed -i '/openInExternalBrowser(String(android\.util\.Base64\.decode(OMG10/d' "$file"
+            
+            # Remove showTelegramPopup() call
+            sed -i '/showTelegramPopup()/d' "$file"
+            
+            # Remove star popup comment
+            sed -i '/\/\/ Show star popup on first visit (shared across all CNCVerse plugins)/d' "$file"
+          done
+          
+          # Remove multi-line functions: showTelegramPopup and openInExternalBrowser
+          python3 << 'PYEOF'
+          import os, re
+          
+          def remove_functions(content, func_names):
+              """Remove entire function definitions from Kotlin code."""
+              lines = content.split('\n')
+              result = []
+              skip = False
+              brace_count = 0
+              
+              for line in lines:
+                  if not skip:
+                      # Check if this line starts one of the target functions
+                      is_target = False
+                      for fname in func_names:
+                          if re.search(r'\bfun\s+' + re.escape(fname) + r'\s*\(', line):
+                              is_target = True
+                              break
+                      
+                      if is_target:
+                          skip = True
+                          brace_count = line.count('{') - line.count('}')
+                          if brace_count <= 0 and '{' in line:
+                              skip = False
+                          continue
+                  
+                  if skip:
+                      brace_count += line.count('{') - line.count('}')
+                      if brace_count <= 0:
+                          skip = False
+                      continue
+                  
+                  result.append(line)
+              
+              return '\n'.join(result)
+          
+          func_names = ['showTelegramPopup', 'openInExternalBrowser']
+          
+          for root, dirs, files in os.walk('.'):
+              if '.git' in root:
+                  continue
+              for fname in files:
+                  if fname.endswith('.kt'):
+                      fpath = os.path.join(root, fname)
+                      with open(fpath, 'r', encoding='utf-8') as f:
+                          content = f.read()
+                      
+                      original = content
+                      content = remove_functions(content, func_names)
+                      
+                      # Remove now-unused imports if not used elsewhere
+                      suspect_imports = {
+                          'import android.content.Intent': r'Intent[^a-zA-Z]',
+                          'import android.net.Uri': r'Uri[^a-zA-Z]',
+                          'import android.os.Handler': r'Handler[^a-zA-Z]',
+                          'import android.os.Looper': r'Looper[^a-zA-Z]',
+                          'import com.lagradost.cloudstream3.ui.settings.Globals.TV': r'\bTV\b',
+                          'import com.lagradost.cloudstream3.ui.settings.Globals.isLayout': r'isLayout[^a-zA-Z]',
+                      }
+                      
+                      for imp, pattern in suspect_imports.items():
+                          if imp in content:
+                              without_import = content.replace(imp + '\n', '')
+                              if not re.search(pattern, without_import):
+                                  content = without_import
+                      
+                      # Clean up excessive blank lines
+                      content = re.sub(r'\n{4,}', '\n\n\n', content)
+                      
+                      if content != original:
+                          with open(fpath, 'w', encoding='utf-8') as f:
+                              f.write(content)
+                          print(f"Cleaned: {fpath}")
+          PYEOF
+
+      - name: Commit and push cleaned code
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes to commit after cleanup"
+          else
+            git commit -m "Auto-sync from upstream + remove ads/popups
+
+          Automatically synced latest changes from NivinCNC/CNCVerse-Cloud-Stream-Extension
+          and removed ad redirect/popup code."
+            git push origin HEAD
+          fi
