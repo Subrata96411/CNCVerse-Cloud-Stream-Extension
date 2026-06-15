@@ -1,7 +1,5 @@
-﻿package com.cncverse
+package com.cncverse
 
-import android.os.Handler
-import android.os.Looper
 import android.util.Base64
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
@@ -29,11 +27,6 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import com.lagradost.cloudstream3.APIHolder.unixTime
-import com.lagradost.cloudstream3.ui.settings.Globals.TV
-import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
-import android.content.Intent
-import android.net.Uri
-
 /**
  * PlayZTV Live Events provider.
  *
@@ -45,14 +38,10 @@ class PlayZTVLiveEventsProvider : MainAPI() {
 
     companion object {
         var context: android.content.Context? = null
-        private const val OMG10 = "aHR0cHM6Ly9vbWcxMC5jb20vNC8xMTEwNDQ4OQ=="
-        @Volatile private var lastBrowserOpenMs = 0L
-        @Volatile private var telegramPopupShown = false
-        private const val BROWSER_DEBOUNCE_MS = 10_000L
     }
 
     override var mainUrl = "https://adsflw.xyz"
-    override var name = "⚡PlayZTV Live Events"
+    override var name = "?PlayZTV Live Events"
     override var lang = "hi"
     override val hasMainPage = true
     override val hasChromecastSupport = true
@@ -63,7 +52,7 @@ class PlayZTVLiveEventsProvider : MainAPI() {
         .readTimeout(30, TimeUnit.SECONDS)
         .build()
 
-    // ── Display helpers ───────────────────────────────────────────────────────
+    // -- Display helpers -------------------------------------------------------
 
     private fun createDisplayTitle(event: PlayZLiveEventData): String {
         val info = event.eventInfo ?: return event.title
@@ -81,9 +70,9 @@ class PlayZTVLiveEventsProvider : MainAPI() {
             val start = info.startTime?.let { fmt.parse(it)?.time }
             val end = info.endTime?.let { fmt.parse(it)?.time }
             when {
-                end != null && now >= end -> "✅"
-                start != null && now >= start -> "🔴"
-                start != null && now < start -> "🔜"
+                end != null && now >= end -> "?"
+                start != null && now >= start -> "??"
+                start != null && now < start -> "??"
                 else -> ""
             }
         } catch (_: Exception) { "" }
@@ -146,7 +135,7 @@ class PlayZTVLiveEventsProvider : MainAPI() {
         }
     }
 
-    // ── Load data ─────────────────────────────────────────────────────────────
+    // -- Load data -------------------------------------------------------------
 
     data class LiveEventLoadData(
         val eventId: Int,
@@ -157,10 +146,9 @@ class PlayZTVLiveEventsProvider : MainAPI() {
         val eventInfo: PlayZLiveEventInfo?
     )
 
-    // ── CloudStream interface ─────────────────────────────────────────────────
+    // -- CloudStream interface -------------------------------------------------
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
-        showTelegramPopup()
 
         val events = PlayZTVProviderManager.fetchLiveEvents()
         val grouped = events.groupBy { it.eventInfo?.eventCat ?: it.cat ?: "Other" }
@@ -168,10 +156,10 @@ class PlayZTVLiveEventsProvider : MainAPI() {
         val pages = grouped
             .map { (category, catEvents) ->
                 val icon = when (category.lowercase()) {
-                    "cricket" -> "🏏"; "football" -> "⚽"; "basketball" -> "🏀"
-                    "ice hockey" -> "🏒"; "boxing" -> "🥊"
-                    "motorsport" -> "🏎️"; "tennis" -> "🎾"
-                    else -> "📺"
+                    "cricket" -> "??"; "football" -> "?"; "basketball" -> "??"
+                    "ice hockey" -> "??"; "boxing" -> "??"
+                    "motorsport" -> "???"; "tennis" -> "??"
+                    else -> "??"
                 }
                 val items = catEvents
                     .sortedByDescending { isEventLive(it) }
@@ -234,17 +222,17 @@ class PlayZTVLiveEventsProvider : MainAPI() {
         val info = data.eventInfo
         val plot = buildString {
             info?.let { i ->
-                i.eventType?.let { append("📌 $it\n") }
-                i.eventName?.let { append("🏆 $it\n") }
+                i.eventType?.let { append("?? $it\n") }
+                i.eventName?.let { append("?? $it\n") }
                 i.startTime?.let {
                     try {
                         val df = SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z", Locale.US)
                         val disp = SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.US)
-                        df.parse(it)?.let { d -> append("🕐 ${disp.format(d)}\n") }
-                    } catch (_: Exception) { append("🕐 $it\n") }
+                        df.parse(it)?.let { d -> append("?? ${disp.format(d)}\n") }
+                    } catch (_: Exception) { append("?? $it\n") }
                 }
             }
-            append("\n📡 Available Servers: ${data.formats.size}")
+            append("\n?? Available Servers: ${data.formats.size}")
         }
         return newLiveStreamLoadResponse(data.title, url, url) {
             this.posterUrl = data.poster
@@ -253,133 +241,12 @@ class PlayZTVLiveEventsProvider : MainAPI() {
     }
 
 
-    private fun showTelegramPopup() {
-        if (isLayout(TV)) return
-        val ctx = context ?: return
-        if (telegramPopupShown) return
-        val prefs = ctx.getSharedPreferences("cncverse_prefs", android.content.Context.MODE_PRIVATE)
-        if (prefs.getBoolean("telegram_popup_shown", false)) { telegramPopupShown = true; return }
-        telegramPopupShown = true
-        prefs.edit().putBoolean("telegram_popup_shown", true).apply()
-        Handler(Looper.getMainLooper()).post {
-            try {
-                val dp = ctx.resources.displayMetrics.density
-
-                // Rounded dark card background
-                val bgDraw = android.graphics.drawable.GradientDrawable().apply {
-                    setColor(android.graphics.Color.parseColor("#1A1A2E"))
-                    cornerRadius = 16f * dp
-                }
-
-                val root = android.widget.LinearLayout(ctx).apply {
-                    orientation = android.widget.LinearLayout.VERTICAL
-                    setPadding((24 * dp).toInt(), (20 * dp).toInt(), (24 * dp).toInt(), (16 * dp).toInt())
-                    background = bgDraw
-                }
-
-                // Title
-                val titleTv = android.widget.TextView(ctx).apply {
-                    text = "\uD83D\uDCAC Join CNCVerse Community"
-                    setTextColor(android.graphics.Color.WHITE)
-                    textSize = 17f
-                    typeface = android.graphics.Typeface.DEFAULT_BOLD
-                    layoutParams = android.widget.LinearLayout.LayoutParams(-1, -2)
-                        .also { it.bottomMargin = (10 * dp).toInt() }
-                }
-
-                // Thin divider
-                val dividerV = android.view.View(ctx).apply {
-                    setBackgroundColor(android.graphics.Color.parseColor("#2D2D4A"))
-                    layoutParams = android.widget.LinearLayout.LayoutParams(-1, 1)
-                        .also { it.bottomMargin = (14 * dp).toInt() }
-                }
-
-                // Message
-                val msgTv = android.widget.TextView(ctx).apply {
-                    text = "Join our Telegram group to discuss and share your opinion!"
-                    setTextColor(android.graphics.Color.parseColor("#A0A0A8"))
-                    textSize = 14f
-                    setLineSpacing(0f, 1.4f)
-                    layoutParams = android.widget.LinearLayout.LayoutParams(-1, -2)
-                        .also { it.bottomMargin = (18 * dp).toInt() }
-                }
-
-                // Button row
-                val btnRow = android.widget.LinearLayout(ctx).apply {
-                    orientation = android.widget.LinearLayout.HORIZONTAL
-                    gravity = android.view.Gravity.END
-                }
-                val laterTv = android.widget.TextView(ctx).apply {
-                    text = "Later"
-                    setTextColor(android.graphics.Color.parseColor("#808090"))
-                    textSize = 14f
-                    val p = (10 * dp).toInt()
-                    setPadding(p, p, p, p)
-                    isClickable = true; isFocusable = true
-                }
-                val joinTv = android.widget.TextView(ctx).apply {
-                    text = "Join Telegram"
-                    setTextColor(android.graphics.Color.parseColor("#5B9BF5"))
-                    textSize = 14f
-                    typeface = android.graphics.Typeface.DEFAULT_BOLD
-                    val p = (10 * dp).toInt()
-                    setPadding(p, p, 0, p)
-                    isClickable = true; isFocusable = true
-                }
-                btnRow.addView(laterTv)
-                btnRow.addView(joinTv)
-                root.addView(titleTv)
-                root.addView(dividerV)
-                root.addView(msgTv)
-                root.addView(btnRow)
-
-                val dialog = android.app.AlertDialog.Builder(ctx)
-                    .setView(root)
-                    .setCancelable(true)
-                    .create()
-
-                // Transparent window so rounded card corners show
-                dialog.window?.setBackgroundDrawable(
-                    android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT)
-                )
-
-                laterTv.setOnClickListener { dialog.dismiss() }
-                joinTv.setOnClickListener {
-                    dialog.dismiss()
-                    try {
-                        val i = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("https://t.me/cncverse"))
-                        i.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
-                        ctx.startActivity(i)
-                    } catch (_: Exception) {}
-                }
-                dialog.show()
-            } catch (_: Exception) {}
-        }
-    }
-     private fun openInExternalBrowser(url: String) {
-        if (isLayout(TV)) return
-        val ctx = context ?: return
-        val now = System.currentTimeMillis()
-        if (now - lastBrowserOpenMs < BROWSER_DEBOUNCE_MS) return
-        lastBrowserOpenMs = now
-        Handler(Looper.getMainLooper()).post {
-            try {
-                ctx.startActivity(
-                    Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    }
-                )
-            } catch (e: Exception) { }
-        }
-    }
-
     override suspend fun loadLinks(
         data: String,
         isCasting: Boolean,
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        openInExternalBrowser(String(android.util.Base64.decode(OMG10, android.util.Base64.DEFAULT)))
         val loadData = parseJson<LiveEventLoadData>(data)
         val streams = PlayZTVProviderManager.fetchChannelStreams(loadData.slug)
         if (streams.isNullOrEmpty()) return false
@@ -460,7 +327,7 @@ override fun getVideoInterceptor(extractorLink: ExtractorLink): Interceptor? {
     }
 }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
+    // -- Helpers ---------------------------------------------------------------
 
     /** Parses `url|Header1=val1|Header2=val2` format. */
     private fun parseStreamLink(link: String): Pair<String, Map<String, String>> {

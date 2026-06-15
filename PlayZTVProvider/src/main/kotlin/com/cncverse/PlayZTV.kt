@@ -225,7 +225,6 @@ private fun String.hexToBase64UrlOrNull(): String? {
         page: Int,
         request : MainPageRequest
     ): HomePageResponse {
-        // Show star popup on first visit (shared across all CNCVerse plugins)
 
         
         val rawContent = getWithCustomHeaders(mainUrl)

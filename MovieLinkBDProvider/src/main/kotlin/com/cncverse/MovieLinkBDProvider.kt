@@ -20,22 +20,13 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.Qualities
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
-import android.os.Handler
-import android.os.Looper
-import com.lagradost.cloudstream3.ui.settings.Globals.TV
-import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
-
 class MovieLinkBDProvider : MainAPI() {
     companion object {
         var appContext: Context? = null
         // The site uses a rotating subdomain mirror; we store the resolved base
         // and fall back to movielinkbd.one if the mirror fails.
         private const val FALLBACK_URL = "https://movielinkbd.one"
-        private const val OMG10 = "aHR0cHM6Ly9vbWcxMC5jb20vNC8xMTEwNDQ4OQ=="
-        @Volatile private var lastBrowserOpenMs = 0L
-        private const val BROWSER_DEBOUNCE_MS = 10_000L
     }
 
     override var mainUrl = "https://movielinkbd.one"
@@ -102,22 +93,6 @@ class MovieLinkBDProvider : MainAPI() {
         }
     }
 
-        private fun openInExternalBrowser(url: String) {
-        if (isLayout(TV)) return
-        val ctx = appContext ?: return
-        val now = System.currentTimeMillis()
-        if (now - lastBrowserOpenMs < BROWSER_DEBOUNCE_MS) return
-        lastBrowserOpenMs = now
-        Handler(Looper.getMainLooper()).post {
-            try {
-                ctx.startActivity(
-                    Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    }
-                )
-            } catch (e: Exception) { }
-        }
-    }
 
     // ── Homepage / category pages ───────────────────────────────────────────
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
@@ -372,7 +347,6 @@ class MovieLinkBDProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-         openInExternalBrowser(String(android.util.Base64.decode(OMG10, android.util.Base64.DEFAULT)))
         if (!data.contains("|")) return false
         data.split(" ; ").forEach { item ->
             val parts = item.split("|")

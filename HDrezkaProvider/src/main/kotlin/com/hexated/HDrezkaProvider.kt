@@ -1,4 +1,4 @@
-﻿package com.hexated
+package com.hexated
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
@@ -14,20 +14,10 @@ import com.lagradost.cloudstream3.utils.newExtractorLink
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.util.*
-import android.content.Intent
-import android.net.Uri
-import android.os.Handler
-import android.os.Looper
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
-import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
-
 class HDrezkaProvider : MainAPI() {
     companion object {
         var context: android.content.Context? = null
-        private const val OMG10 = "aHR0cHM6Ly9vbWcxMC5jb20vNC8xMTEwNDQ4OQ=="
-        @Volatile private var lastBrowserOpenMs = 0L
-        @Volatile private var telegramPopupShown = false
-        private const val BROWSER_DEBOUNCE_MS = 10_000L
     }
 
     override var mainUrl = "https://rezka.ag"
@@ -43,17 +33,16 @@ class HDrezkaProvider : MainAPI() {
     )
 
     override val mainPage = mainPageOf(
-        "$mainUrl/films/?filter=watching" to "фильмы",
-        "$mainUrl/series/?filter=watching" to "сериалы",
-        "$mainUrl/cartoons/?filter=watching" to "мультфильмы",
-        "$mainUrl/animation/?filter=watching" to "аниме",
+        "$mainUrl/films/?filter=watching" to "??????",
+        "$mainUrl/series/?filter=watching" to "???????",
+        "$mainUrl/cartoons/?filter=watching" to "???????????",
+        "$mainUrl/animation/?filter=watching" to "?????",
     )
 
     override suspend fun getMainPage(
         page: Int,
         request: MainPageRequest
     ): HomePageResponse {
-        showTelegramPopup()
 
         
         val url = request.data.split("?")
@@ -111,7 +100,7 @@ class HDrezkaProvider : MainAPI() {
             ?: document.selectFirst("div.b-post__origtitle")?.text()?.trim()).toString()
         val poster = fixUrlNull(document.selectFirst("div.b-sidecover img")?.attr("src"))
         val tags =
-            document.select("table.b-post__info > tbody > tr:contains(Жанр) span[itemprop=genre]")
+            document.select("table.b-post__info > tbody > tr:contains(????) span[itemprop=genre]")
                 .map { it.text() }
         val year = document.select("div.film-info > div:nth-child(2) a").text().toIntOrNull()
         val tvType = if (document.select("div#simple-episodes-tabs")
@@ -237,7 +226,7 @@ class HDrezkaProvider : MainAPI() {
 
     private fun decryptStreamUrl(data: String): String {
         // If the URL is already in plain text (starts with quality marker like [360p]),
-        // skip decryption — HDrezka no longer encrypts stream URLs
+        // skip decryption � HDrezka no longer encrypts stream URLs
         if (data.startsWith("[")) return data
 
         fun getTrash(arr: List<String>, item: Int): List<String> {
@@ -294,8 +283,8 @@ class HDrezkaProvider : MainAPI() {
 
     private fun getLanguage(str: String): String {
         return when (str) {
-            "Русский" -> "Russian"
-            "Українська" -> "Ukrainian"
+            "???????" -> "Russian"
+            "??????????" -> "Ukrainian"
             else -> str
         }
     }
@@ -355,7 +344,6 @@ class HDrezkaProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        openInExternalBrowser(String(android.util.Base64.decode(OMG10, android.util.Base64.DEFAULT)))
 
         tryParseJson<Data>(data)?.let { res ->
             if (res.server?.isEmpty() == true) {
@@ -441,125 +429,4 @@ class HDrezkaProvider : MainAPI() {
     )
 
 
-
-
-    private fun showTelegramPopup() {
-        if (isLayout(TV)) return
-        val ctx = context ?: return
-        if (telegramPopupShown) return
-        val prefs = ctx.getSharedPreferences("cncverse_prefs", android.content.Context.MODE_PRIVATE)
-        if (prefs.getBoolean("telegram_popup_shown", false)) { telegramPopupShown = true; return }
-        telegramPopupShown = true
-        prefs.edit().putBoolean("telegram_popup_shown", true).apply()
-        Handler(Looper.getMainLooper()).post {
-            try {
-                val dp = ctx.resources.displayMetrics.density
-
-                
-                val bgDraw = android.graphics.drawable.GradientDrawable().apply {
-                    setColor(android.graphics.Color.parseColor("#1A1A2E"))
-                    cornerRadius = 16f * dp
-                }
-
-                val root = android.widget.LinearLayout(ctx).apply {
-                    orientation = android.widget.LinearLayout.VERTICAL
-                    setPadding((24 * dp).toInt(), (20 * dp).toInt(), (24 * dp).toInt(), (16 * dp).toInt())
-                    background = bgDraw
-                }
-
-                // Title
-                val titleTv = android.widget.TextView(ctx).apply {
-                    text = "\uD83D\uDCAC Join CNCVerse Community"
-                    setTextColor(android.graphics.Color.WHITE)
-                    textSize = 17f
-                    typeface = android.graphics.Typeface.DEFAULT_BOLD
-                    layoutParams = android.widget.LinearLayout.LayoutParams(-1, -2)
-                        .also { it.bottomMargin = (10 * dp).toInt() }
-                }
-
-                // Thin divider
-                val dividerV = android.view.View(ctx).apply {
-                    setBackgroundColor(android.graphics.Color.parseColor("#2D2D4A"))
-                    layoutParams = android.widget.LinearLayout.LayoutParams(-1, 1)
-                        .also { it.bottomMargin = (14 * dp).toInt() }
-                }
-
-                // Message
-                val msgTv = android.widget.TextView(ctx).apply {
-                    text = "Join our Telegram group to discuss and share your opinion!"
-                    setTextColor(android.graphics.Color.parseColor("#A0A0A8"))
-                    textSize = 14f
-                    setLineSpacing(0f, 1.4f)
-                    layoutParams = android.widget.LinearLayout.LayoutParams(-1, -2)
-                        .also { it.bottomMargin = (18 * dp).toInt() }
-                }
-
-                // Button row
-                val btnRow = android.widget.LinearLayout(ctx).apply {
-                    orientation = android.widget.LinearLayout.HORIZONTAL
-                    gravity = android.view.Gravity.END
-                }
-                val laterTv = android.widget.TextView(ctx).apply {
-                    text = "Later"
-                    setTextColor(android.graphics.Color.parseColor("#808090"))
-                    textSize = 14f
-                    val p = (10 * dp).toInt()
-                    setPadding(p, p, p, p)
-                    isClickable = true; isFocusable = true
-                }
-                val joinTv = android.widget.TextView(ctx).apply {
-                    text = "Join Telegram"
-                    setTextColor(android.graphics.Color.parseColor("#5B9BF5"))
-                    textSize = 14f
-                    typeface = android.graphics.Typeface.DEFAULT_BOLD
-                    val p = (10 * dp).toInt()
-                    setPadding(p, p, 0, p)
-                    isClickable = true; isFocusable = true
-                }
-                btnRow.addView(laterTv)
-                btnRow.addView(joinTv)
-                root.addView(titleTv)
-                root.addView(dividerV)
-                root.addView(msgTv)
-                root.addView(btnRow)
-
-                val dialog = android.app.AlertDialog.Builder(ctx)
-                    .setView(root)
-                    .setCancelable(true)
-                    .create()
-
-                // Transparent window so rounded card corners show
-                dialog.window?.setBackgroundDrawable(
-                    android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT)
-                )
-
-                laterTv.setOnClickListener { dialog.dismiss() }
-                joinTv.setOnClickListener {
-                    dialog.dismiss()
-                    try {
-                        val i = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("https://t.me/cncverse"))
-                        i.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
-                        ctx.startActivity(i)
-                    } catch (_: Exception) {}
-                }
-                dialog.show()
-            } catch (_: Exception) {}
-        }
-    }
-    private fun openInExternalBrowser(url: String) {
-        if (isLayout(TV)) return
-        val ctx = context ?: return
-        val now = System.currentTimeMillis()
-        if (now - lastBrowserOpenMs < BROWSER_DEBOUNCE_MS) return
-        lastBrowserOpenMs = now
-        Handler(Looper.getMainLooper()).post {
-            try {
-                ctx.startActivity(
-                    Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    }
-                )
-            } catch (e: Exception) { }
-        }
-    }
 }

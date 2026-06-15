@@ -1,4 +1,4 @@
-﻿package com.cncverse
+package com.cncverse
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.AnimeSearchResponse
@@ -45,7 +45,6 @@ class GoldenAudiobook : MainAPI() { // all providers must be an instance of Main
             )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
-        // Show star popup on first visit (shared across all CNCVerse plugins)
         
         val document = app.get("$mainUrl/${request.data}/page/$page/").document
         val home = document.select("article").mapNotNull { it.toSearchResult() }

@@ -1,4 +1,4 @@
-﻿package com.cncverse
+package com.cncverse
 
 import android.util.Base64
 import com.lagradost.cloudstream3.*
@@ -225,7 +225,6 @@ private fun String.hexToBase64UrlOrNull(): String? {
         page: Int,
         request : MainPageRequest
     ): HomePageResponse {
-        // Show star popup on first visit (shared across all CNCVerse plugins)
 
         
         val rawContent = getWithCustomHeaders(mainUrl)
