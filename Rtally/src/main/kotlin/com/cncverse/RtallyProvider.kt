@@ -19,7 +19,6 @@ import com.lagradost.cloudstream3.newTvSeriesLoadResponse
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.loadExtractor
 import org.jsoup.nodes.Element
-import com.lagradost.cloudstream3.ui.settings.Globals.TV
 //suspend fun main() {
 //    val providerTester = com.lagradost.cloudstreamtest.ProviderTester(RtallyProvider())
 ////    providerTester.testAll()

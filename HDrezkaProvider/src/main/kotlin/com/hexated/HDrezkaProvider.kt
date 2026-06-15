@@ -14,7 +14,6 @@ import com.lagradost.cloudstream3.utils.newExtractorLink
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.util.*
-import com.lagradost.cloudstream3.ui.settings.Globals.TV
 class HDrezkaProvider : MainAPI() {
     companion object {
         var context: android.content.Context? = null

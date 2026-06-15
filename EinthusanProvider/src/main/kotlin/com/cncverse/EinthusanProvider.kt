@@ -12,7 +12,6 @@ import okhttp3.FormBody
 import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import com.lagradost.cloudstream3.ui.settings.Globals.TV
 class EinthusanProvider : MainAPI() { // all providers must be an instance of MainAPI
     override var mainUrl = "https://einthusan.tv"
     override var name = "Einthusan"
