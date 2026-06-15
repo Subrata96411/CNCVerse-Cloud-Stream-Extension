@@ -1,23 +1,4 @@
-### ❤️ Support
-
-If you find this project helpful, consider supporting its development! (UPI Supported):
-
-<a href="https://www.paywithchai.in/nivincnc" target="_blank"><img src="https://raw.githubusercontent.com/NivinCNC/streamflix/refs/heads/main/assets/1000156022-removebg-preview%7E2.png" alt="Pay With Chai" style="height: 60px !important;width: 217px !important;" ></a>
-
-Your support helps keep this project alive and enables continued maintanance of providers addition of new providers.
-
-### 💬 Community
-
-Join our Telegram group to discuss extensions, request features, or report issues:  
-
-[![Join us on Telegram](https://img.shields.io/badge/Telegram-Join%20Group-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/cncverse)
-
-### 🕹 Tools and Programming languages used :
-<p align="left">
-  <a href="https://skillicons.dev">
-    <img src="https://skillicons.dev/icons?i=kotlin,androidstudio,gradle,github,githubactions&theme=light&perline=5" />
-  </a>
-</p>
+# CNCVerse CloudStream Extension (Clean & Ad-Free Fork)
 
 ### Requirements
 
