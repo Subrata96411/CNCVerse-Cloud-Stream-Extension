@@ -230,8 +230,7 @@ jobs:
           # Configure remote builds branch
           git fetch origin builds || true
           if git show-ref --quiet refs/remotes/origin/builds; then
-            git checkout builds
-            git pull origin builds
+            git checkout -B builds origin/builds
           else
             git checkout --orphan builds
           fi
