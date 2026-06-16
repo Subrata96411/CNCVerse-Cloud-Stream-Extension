@@ -1,5 +1,6 @@
 package com.cncverse
 
+import android.content.Context
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
@@ -14,7 +15,7 @@ import kotlinx.coroutines.withContext
  * HOW TO USE:
  * 1. Open Amazon Prime Video in a desktop browser and log in.
  * 2. Export your cookies (e.g. using "EditThisCookie" or "Cookie-Editor" browser extension).
- * 3. Paste the full cookie string in Settings → AmazonProvider → Cookie.
+ * 3. Paste the full cookie string in Settings → AmazonProvider.
  *
  * ⚠️ IMPORTANT: DRM-protected content (most Prime Video titles) requires a
  *    Widevine L1/L3 license. CloudStream is not a certified Amazon player,
@@ -26,7 +27,6 @@ class AmazonProvider : MainAPI() {
     override var name = "Amazon Prime Video"
     override var lang = "en"
     override val hasMainPage = true
-    override val hasSearch = true
     override val hasChromecastSupport = false
     override val supportedTypes = setOf(
         TvType.Movie,
@@ -38,6 +38,8 @@ class AmazonProvider : MainAPI() {
     // ────────────────────────────────────────────────────────────────────────────
 
     companion object {
+        var context: Context? = null
+
         /** Marketplace IDs used by Amazon for different regions */
         private val MARKETPLACE_MAP = mapOf(
             "US" to "ATVPDKIKX0DER",
@@ -70,16 +72,17 @@ class AmazonProvider : MainAPI() {
     }
 
     // ────────────────────────────────────────────────────────────────────────────
-    // Settings (stored in CloudStream's key-value store)
+    // Settings (stored in CloudStream's key-value store via context)
     // ────────────────────────────────────────────────────────────────────────────
 
-    override val mainUrl: String
+    override var mainUrl: String
         get() = BASE_URLS[getRegion()] ?: "https://www.amazon.com"
+        set(value) {}
 
     private fun getApiUrl()  = API_URLS[getRegion()]  ?: "https://atv-ps.amazon.com"
     private fun getMarketId() = MARKETPLACE_MAP[getRegion()] ?: "ATVPDKIKX0DER"
-    private fun getRegion()   = settingsManager?.getString("amazon_region", "US") ?: "US"
-    private fun getCookie()   = settingsManager?.getString("amazon_cookie", "") ?: ""
+    private fun getRegion()   = context?.getSharedPreferences("AmazonProviderPrefs", Context.MODE_PRIVATE)?.getString("amazon_region", "US") ?: "US"
+    private fun getCookie()   = context?.getSharedPreferences("AmazonProviderPrefs", Context.MODE_PRIVATE)?.getString("amazon_cookie", "") ?: ""
 
     /** Build common query-string parameters for the mobile API */
     private fun defParams(): String {
@@ -109,37 +112,6 @@ class AmazonProvider : MainAPI() {
             }
         }
     }
-
-    // ────────────────────────────────────────────────────────────────────────────
-    // Settings UI (shown to the user inside CloudStream)
-    // ────────────────────────────────────────────────────────────────────────────
-
-    override fun getSettings(): List<SettingsItem> = listOf(
-        SettingsItem(
-            name = "⚠️ WARNING – Read before use",
-            key = "amazon_warning",
-            type = SettingsType.Info,
-            value = "This plugin lets you browse Amazon Prime Video using your own account cookies. " +
-                    "DRM-protected content (most Prime Video titles) may NOT play because CloudStream " +
-                    "is not a certified Amazon player. Providing your cookies means they are stored " +
-                    "locally on your device only and are never sent anywhere else."
-        ),
-        SettingsItem(
-            name = "Region",
-            key = "amazon_region",
-            type = SettingsType.Dropdown,
-            value = "US",
-            options = listOf("US", "UK", "DE", "JP", "IN")
-        ),
-        SettingsItem(
-            name = "Account Cookie",
-            key = "amazon_cookie",
-            type = SettingsType.Password,
-            value = "",
-            description = "Paste your Amazon cookie string here. Get it from your browser's DevTools " +
-                          "→ Application → Cookies → amazon.com → Copy all as header value."
-        )
-    )
 
     // ────────────────────────────────────────────────────────────────────────────
     // Main page sections
@@ -230,7 +202,7 @@ class AmazonProvider : MainAPI() {
         val plot     = response?.detail?.synopsis ?: ""
         val poster   = response?.detail?.image?.replace(Regex("\\._.*_."), ".")
         val year     = response?.detail?.releaseYear
-        val rating   = response?.detail?.ratingValue?.toRatingInt()
+        val rating   = response?.detail?.ratingValue?.toDoubleOrNull()?.let { Score.from10(it) }
         val isMovie  = response?.detail?.contentType?.lowercase() == "movie"
         val seasons  = response?.detail?.seasons
 
@@ -239,7 +211,7 @@ class AmazonProvider : MainAPI() {
                 this.posterUrl = poster
                 this.plot      = plot
                 this.year      = year
-                this.rating    = rating
+                this.score     = rating
             }
         } else {
             val episodeList = mutableListOf<Episode>()
@@ -260,7 +232,7 @@ class AmazonProvider : MainAPI() {
                 this.posterUrl = poster
                 this.plot      = plot
                 this.year      = year
-                this.rating    = rating
+                this.score     = rating
             }
         }
     }
@@ -325,15 +297,16 @@ class AmazonProvider : MainAPI() {
         val streamUrl = extractStreamUrl(playbackJson)
         if (streamUrl != null) {
             callback(
-                ExtractorLink(
+                newExtractorLink(
                     source  = this.name,
                     name    = this.name,
                     url     = streamUrl,
-                    referer = mainUrl,
-                    quality = Qualities.Unknown.value,
-                    isM3u8  = false, // Amazon uses DASH (.mpd)
-                    headers = headers()
-                )
+                    type    = ExtractorLinkType.DASH
+                ) {
+                    this.quality = Qualities.Unknown.value
+                    this.referer = mainUrl
+                    this.headers = headers()
+                }
             )
         }
 
@@ -375,7 +348,7 @@ class AmazonProvider : MainAPI() {
             val defaultId = playbackUrls.defaultUrlSetId
             val urlSet = playbackUrls.urlSets?.get(defaultId)
                 ?: playbackUrls.urlSets?.values?.firstOrNull()
-            val manifestUrl = urlSet?.urls?.get("manifest") as? String
+            val manifestUrl = urlSet?.urls?.get("manifest")
             if (manifestUrl != null) return manifestUrl
         }
 
@@ -479,8 +452,12 @@ class AmazonProvider : MainAPI() {
     )
 
     data class PlaybackUrls(
-        val defaultUrlSetId: String?              = null,
-        val urlSets:         Map<String, Any>?    = null
+        val defaultUrlSetId: String?                  = null,
+        val urlSets:         Map<String, UrlSetInfo>? = null
+    )
+
+    data class UrlSetInfo(
+        val urls: Map<String, String>? = null
     )
 
     data class Subtitle(
