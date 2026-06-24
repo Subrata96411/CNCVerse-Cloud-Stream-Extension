@@ -8,7 +8,7 @@ import android.content.Context
 class DoFlixProviderPlugin: Plugin() {
     override fun load(context: Context) {
         // All providers should be added in this manner. Please don't edit the providers list directly.
-        DoFlixProvider.context = context
+        DoFlixProvider.INSTANCE.context = context
         registerMainAPI(DoFlixProvider())
     }
 }

@@ -8,7 +8,7 @@ import android.content.Context
 @CloudstreamPlugin
 class HDrezkaProviderPlugin: Plugin() {
     override fun load(context: Context) {
-        HDrezkaProvider.context = context
+        HDrezkaProvider.INSTANCE.context = context
         // All providers should be added in this manner. Please don't edit the providers list directly.
         registerMainAPI(HDrezkaProvider())
     }

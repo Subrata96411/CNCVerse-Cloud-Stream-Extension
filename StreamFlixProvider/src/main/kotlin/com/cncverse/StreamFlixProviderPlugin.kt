@@ -8,7 +8,7 @@ import android.content.Context
 class StreamFlixProviderPlugin: Plugin() {
     override fun load(context: Context) {
         // All providers should be added in this manner. Please don't edit the providers list directly.
-        StreamFlixProvider.context = context
+        StreamFlixProvider.INSTANCE.context = context
         registerMainAPI(StreamFlixProvider())
     }
 }

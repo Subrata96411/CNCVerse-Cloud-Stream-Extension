@@ -7,7 +7,7 @@ import android.content.Context
 @CloudstreamPlugin
 class MovieLinkBDPlugin : Plugin() {
     override fun load(context: Context) {
-        MovieLinkBDProvider.appContext = context
+        MovieLinkBDProvider.INSTANCE.appContext = context
         registerMainAPI(MovieLinkBDProvider())
     }
 }

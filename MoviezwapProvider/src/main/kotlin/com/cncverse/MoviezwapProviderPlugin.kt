@@ -8,7 +8,7 @@ import android.content.Context
 class MoviezwapProviderPlugin: Plugin() {
     override fun load(context: Context) {
         // All providers should be added in this manner. Please don't edit the providers list directly.
-        MoviezwapProvider.context = context
+        MoviezwapProvider.INSTANCE.context = context
         registerMainAPI(MoviezwapProvider())
     }
 }

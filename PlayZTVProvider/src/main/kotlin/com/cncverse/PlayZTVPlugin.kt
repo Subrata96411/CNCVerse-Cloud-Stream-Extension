@@ -23,14 +23,17 @@ class PlayZTVPlugin : Plugin() {
     private var iptvProviders: List<Map<String, Any>> = emptyList()
 
     override fun load(context: Context) {
-        PlayZTV.context = context
-        PlayZTVLiveEventsProvider.context = context
+        PlayZTV.INSTANCE.context = context
+        PlayZTVLiveEventsProvider.INSTANCE.context = context
 
         // Always available — Live Events (not user-configurable)
         registerMainAPI(PlayZTVLiveEventsProvider())
 
         // Fetch provider list from API
-        iptvProviders = runBlocking { PlayZTVProviderManager.fetchProviders() }
+        iptvProviders = runBlocking {
+            @Suppress("UNCHECKED_CAST")
+            (PlayZTVProviderManager.INSTANCE.fetchProviders() as? List<Map<String, Any>>) ?: emptyList()
+        }
 
         // Determine which are enabled in settings
         val providerSettings = iptvProviders.mapNotNull { p ->

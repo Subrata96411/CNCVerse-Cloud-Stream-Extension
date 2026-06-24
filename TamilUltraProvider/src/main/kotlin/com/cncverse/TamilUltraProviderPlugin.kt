@@ -8,7 +8,7 @@ import android.content.Context
 class TamilUltraProviderPlugin: Plugin() {
     override fun load(context: Context) {
         // All providers should be added in this manner. Please don't edit the providers list directly.
-        TamilUltraProvider.context = context
+        TamilUltraProvider.INSTANCE.context = context
         registerMainAPI(TamilUltraProvider())
     }
 }

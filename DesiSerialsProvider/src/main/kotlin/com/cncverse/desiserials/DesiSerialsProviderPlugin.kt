@@ -8,7 +8,7 @@ import android.content.Context
 class DesiSerialsProviderPlugin: Plugin() {
     override fun load(context: Context) {
         // All providers should be added in this manner. Please don't edit the providers list directly.
-        DesiSerialsProvider.context = context
+        DesiSerialsProvider.INSTANCE.context = context
         registerMainAPI(DesiSerialsProvider())
     }
 }

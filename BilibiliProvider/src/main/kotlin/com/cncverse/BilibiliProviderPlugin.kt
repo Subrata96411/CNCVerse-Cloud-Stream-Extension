@@ -8,7 +8,7 @@ import android.content.Context
 class BilibiliProviderPlugin: Plugin() {
     override fun load(context: Context) {
         // All providers should be added in this manner
-        BilibiliProvider.context = context
+        BilibiliProvider.INSTANCE.context = context
         registerMainAPI(BilibiliProvider())
     }
 }

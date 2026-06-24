@@ -7,7 +7,7 @@ import android.content.Context
 @CloudstreamPlugin
 class MlsbdPlugin : Plugin() {
     override fun load(context: Context) {
-        MlsbdProvider.appContext = context
+        MlsbdProvider.INSTANCE.appContext = context
         registerMainAPI(MlsbdProvider())
         registerExtractorAPI(GDFlix())
         registerExtractorAPI(HubCloud())

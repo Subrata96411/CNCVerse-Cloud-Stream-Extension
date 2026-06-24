@@ -7,7 +7,7 @@ import android.content.Context
 @CloudstreamPlugin
 class RadioIndiaProviderPlugin: Plugin() {
     override fun load(context: Context) {
-        RadioIndiaProvider.context = context
+        RadioIndiaProvider.INSTANCE.context = context
         registerMainAPI(RadioIndiaProvider())
     }
 }

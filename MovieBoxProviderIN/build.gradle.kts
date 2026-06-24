@@ -1,5 +1,5 @@
 // use an integer for version numbers
-version = 34
+version = 37
 
 android {
     buildFeatures {
@@ -8,6 +8,7 @@ android {
 }
 
 cloudstream {
+    requiresResources = false
     language = "ta"
     // All of these properties are optional, you can safely remove them
 

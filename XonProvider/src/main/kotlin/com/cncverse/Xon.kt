@@ -7,7 +7,7 @@ import android.content.Context
 @CloudstreamPlugin
 class Xon : Plugin() {
     override fun load(context: Context) {
-        XonProvider.context = context
+        XonProvider.INSTANCE.context = context
         val provider = XonProvider()
         registerMainAPI(provider)
     }

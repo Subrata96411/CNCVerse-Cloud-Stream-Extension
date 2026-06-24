@@ -7,7 +7,7 @@ import android.content.Context
 @CloudstreamPlugin
 class RtallyPlugin: Plugin() {
     override fun load(context: Context) {
-        RtallyProvider.context = context
+        RtallyProvider.INSTANCE.context = context
         registerMainAPI(RtallyProvider())
     }
 }

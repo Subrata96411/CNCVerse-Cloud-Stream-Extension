@@ -15,15 +15,16 @@ class SKTechPlugin: Plugin() {
     private var iptvProviders: List<Map<String, Any>> = emptyList()
 
     override fun load(context: Context) {
-        SKTech.context = context
-        LiveEventsProvider.context = context
+        SKTech.INSTANCE.context = context
+        LiveEventsProvider.INSTANCE.context = context
         
         // Always register Live Events provider first (unremovable)
         registerMainAPI(LiveEventsProvider())
         
         // Fetch IPTV providers from categories.txt
         iptvProviders = runBlocking {
-          ProviderManager.fetchProviders()
+          @Suppress("UNCHECKED_CAST")
+          (ProviderManager.INSTANCE.fetchProviders() as? List<Map<String, Any>>) ?: emptyList()
         }
 
         val providerSettings = iptvProviders.mapNotNull { provider ->

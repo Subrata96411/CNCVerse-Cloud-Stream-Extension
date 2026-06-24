@@ -1,4 +1,4 @@
-version = 24
+version = 27
 
 android {
     buildFeatures {
@@ -8,6 +8,7 @@ android {
 
 
 cloudstream {
+    requiresResources = false
     language = "ta"
     // All of these properties are optional, you can safely remove them
 

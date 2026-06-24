@@ -1,5 +1,5 @@
 // use an integer for version numbers
-version = 21
+version = 24
 
 android {
     buildFeatures {
@@ -8,6 +8,7 @@ android {
 }
 
 cloudstream {
+    requiresResources = false
     language = "ta"
 
     description = "Radio India Provider"
