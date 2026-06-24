@@ -7,7 +7,7 @@ import android.content.Context
 @CloudstreamPlugin
 class HiAnimeProviderPlugin : Plugin() {
     override fun load(context: Context) {
-        Tamilian.INSTANCE.context = context
+        Tamilian.context = context
         registerMainAPI(Tamilian())
     }
 }

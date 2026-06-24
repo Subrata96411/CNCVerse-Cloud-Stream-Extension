@@ -1,5 +1,5 @@
 // use an integer for version numbers
-version = 39
+version = 36
 
 android {
     buildFeatures {
@@ -12,7 +12,6 @@ android {
 }
 
 cloudstream {
-    requiresResources = false
     description = "Movie and TV Series provider"
     authors = listOf("Redowan, NivinCNC")
 

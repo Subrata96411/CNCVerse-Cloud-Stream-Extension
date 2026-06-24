@@ -7,7 +7,7 @@ import android.content.Context
 @CloudstreamPlugin
 class LibriVoxAudiobookPlugin : Plugin() {
     override fun load(context: Context) {
-        LibriVoxAudiobook.INSTANCE.context = context
+        LibriVoxAudiobook.context = context
         // All providers should be added in this manner. Please don't edit the providers list
         // directly.
         registerMainAPI(LibriVoxAudiobook())

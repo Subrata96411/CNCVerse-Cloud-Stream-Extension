@@ -7,7 +7,7 @@ import android.content.Context
 @CloudstreamPlugin
 class GoldenAudiobookPlugin : Plugin() {
     override fun load(context: Context) {
-        GoldenAudiobook.INSTANCE.context = context
+        GoldenAudiobook.context = context
         registerMainAPI(GoldenAudiobook())
     }
 }

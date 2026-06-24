@@ -15,16 +15,15 @@ class CricifyPlugin: Plugin() {
     private var iptvProviders: List<Map<String, Any>> = emptyList()
 
     override fun load(context: Context) {
-        Cricify.INSTANCE.context = context
-        LiveEventsProvider.INSTANCE.context = context
+        Cricify.context = context
+        LiveEventsProvider.context = context
         
         // Always register Live Events provider first (unremovable)
         registerMainAPI(LiveEventsProvider())
         
         // Fetch IPTV providers from cats.txt
         iptvProviders = runBlocking {
-          @Suppress("UNCHECKED_CAST")
-          (ProviderManager.INSTANCE.fetchProviders() as? List<Map<String, Any>>) ?: emptyList()
+          ProviderManager.fetchProviders()
         }
 
         val providerSettings = iptvProviders.mapNotNull { provider ->

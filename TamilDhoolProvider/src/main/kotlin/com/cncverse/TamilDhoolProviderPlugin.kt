@@ -9,7 +9,7 @@ import com.lagradost.cloudstream3.extractors.YoutubeExtractor
 class TamilDhoolProviderPlugin: Plugin() {
     override fun load(context: Context) {
         // All providers should be added in this manner. Please don't edit the providers list directly.
-        TamilDhoolProvider.INSTANCE.context = context
+        TamilDhoolProvider.context = context
         registerMainAPI(TamilDhoolProvider())
         registerExtractorAPI(YoutubeExtractor())
         registerExtractorAPI(Dailymotion())

@@ -1,5 +1,5 @@
 // use an integer for version numbers
-version = 6
+version = 3
 
 android {
     buildFeatures {
@@ -8,7 +8,6 @@ android {
 }
 
 cloudstream {
-    requiresResources = false
     description = "MovieLinkBD - Largest Movie Download Site in Bangladesh"
     authors = listOf("NivinCNC")
 

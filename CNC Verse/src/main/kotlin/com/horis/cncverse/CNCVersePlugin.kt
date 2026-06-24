@@ -9,11 +9,11 @@ import com.lagradost.cloudstream3.plugins.Plugin
 open class CNCVersePlugin: Plugin() {
     override fun load(context: Context) {
         // All providers should be added in this manner. Please don't edit the providers list directly.
-        NetflixMirrorStorage.INSTANCE.init(context.applicationContext)
-        DisneyStudioProvider.INSTANCE.context = context
-        NetflixMirrorProvider.INSTANCE.context = context
-        PrimeVideoMirrorProvider.INSTANCE.context = context
-        HotStarMirrorProvider.INSTANCE.context = context
+        NetflixMirrorStorage.init(context.applicationContext)
+        DisneyStudioProvider.context = context
+        NetflixMirrorProvider.context = context
+        PrimeVideoMirrorProvider.context = context
+        HotStarMirrorProvider.context = context
         registerMainAPI(NetflixMirrorProvider())
         registerMainAPI(PrimeVideoMirrorProvider())
         registerMainAPI(HotStarMirrorProvider())

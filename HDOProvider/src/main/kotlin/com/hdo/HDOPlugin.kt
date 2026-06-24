@@ -8,7 +8,7 @@ import com.lagradost.cloudstream3.plugins.CloudstreamPlugin
 @CloudstreamPlugin
 class HDOProviderPlugin : Plugin() {
     override fun load(context: Context) {
-        HDO.INSTANCE.cont = context
+        HDO.cont = context
         Log.d("HDOPlugin", "Plugin load() called")
         registerMainAPI(HDO())
         Log.d("HDOPlugin", "HDO provider registered")

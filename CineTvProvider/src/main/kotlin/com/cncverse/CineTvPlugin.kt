@@ -8,7 +8,7 @@ import android.content.Context
 class CineTvPlugin: Plugin() {
     override fun load(context: Context) {
         // Register CineTv provider
-        CineTvProvider.INSTANCE.context = context
+        CineTvProvider.context = context
         registerMainAPI(CineTvProvider())
     }
 }

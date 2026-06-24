@@ -1,5 +1,5 @@
 // use an integer for version numbers
-version = 32
+version = 29
 
 android {
     buildFeatures {
@@ -8,7 +8,6 @@ android {
 }
 
 cloudstream {
-    requiresResources = false
     // All of these properties are optional, you can safely remove them
 
     description = "Indian Live TV Provider"

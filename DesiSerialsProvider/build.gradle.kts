@@ -1,5 +1,5 @@
 // use an integer for version numbers
-version = 24
+version = 19
 
 android {
     buildFeatures {
@@ -8,7 +8,6 @@ android {
 }
 
 cloudstream {
-    requiresResources = false
     // All of these properties are optional, you can safely remove them
 
     description = "Desi Serials Tv Shows Provider"

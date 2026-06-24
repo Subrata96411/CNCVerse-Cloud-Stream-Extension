@@ -7,7 +7,7 @@ import android.content.Context
 @CloudstreamPlugin
 class PikashowPlugin: Plugin() {
     override fun load(context: Context) {
-        PikashowProvider.INSTANCE.context = context
+        PikashowProvider.context = context
         registerMainAPI(PikashowProvider())
     }
 }

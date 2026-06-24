@@ -1,5 +1,5 @@
 // use an integer for version numbers
-version = 26
+version = 23
 
 android {
     buildFeatures {
@@ -9,7 +9,6 @@ android {
 
 
 cloudstream {
-    requiresResources = false
     // All of these properties are optional, you can safely remove them
 
     description = "Watch32 is a Free Movies streaming site with over 10000 movies and TV-Series."
