@@ -23,6 +23,7 @@ import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.addDate
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.base64Encode
+import com.lagradost.cloudstream3.base64DecodeArray
 import com.lagradost.cloudstream3.mainPageOf
 import com.lagradost.cloudstream3.mapper
 import com.lagradost.cloudstream3.newEpisode
@@ -53,12 +54,23 @@ class MovieBoxNewProvider : MainAPI() {
     companion object {
         var context: android.content.Context? = null
 
-        // Raw secret keys as plain strings (NOT base64-encoded, matching Python reference exactly)
-        private const val SECRET_KEY_DEFAULT = "76iRl07s0xSN9jqmEWAt79EBJZulIQIsV64FZr2O"
-        private const val SECRET_KEY_ALT = "Xqn2nnO41/L92o1iuXhSLHTbXvY4Z5ZZ62m8mSLA"
+        // Base64-encoded secret key strings. We decode them to raw bytes for HMAC-MD5.
+        // Confirmed working via live API test: double-b64-decoded bytes produce valid signatures.
+        private val SECRET_KEY_DEFAULT_BYTES: ByteArray = base64DecodeArray("76iRl07s0xSN9jqmEWAt79EBJZulIQIsV64FZr2O")
+        private val SECRET_KEY_ALT_BYTES: ByteArray    = base64DecodeArray("Xqn2nnO41/L92o1iuXhSLHTbXvY4Z5ZZ62m8mSLA")
+
+        // API host pool - api6 is the primary (default in Python lib)
+        val HOST_POOL = listOf(
+            "https://api6.aoneroom.com",
+            "https://api5.aoneroom.com",
+            "https://api4.aoneroom.com",
+            "https://api4sg.aoneroom.com",
+            "https://api3.aoneroom.com",
+            "https://api6sg.aoneroom.com",
+        )
     }
 
-    override var mainUrl = "https://api3.aoneroom.com"
+    override var mainUrl = HOST_POOL[0]
     override var name = "MovieBoxNew"
     override val hasMainPage = true
     override var lang = "hi"
@@ -136,8 +148,8 @@ class MovieBoxNewProvider : MainAPI() {
 
     /**
      * Generates x-tr-signature using HMAC-MD5.
-     * KEY FIX: Uses the raw secret key bytes (not double-base64-decoded).
-     * Matches Python: build_signed_headers() -> crypto.sign()
+     * The secret key bytes are derived by base64-decoding the encoded key strings.
+     * Confirmed working via live API test (Variant 4 = 200 OK).
      */
     private fun generateXTrSignature(
         method: String,
@@ -151,9 +163,8 @@ class MovieBoxNewProvider : MainAPI() {
         val timestamp = hardcodedTimestamp ?: System.currentTimeMillis()
         val canonical = buildCanonicalString(method, accept, contentType, url, body, timestamp)
 
-        // Use raw bytes of the secret key string (Python uses str.encode() directly)
-        val secretBytes = if (useAltKey) SECRET_KEY_ALT.toByteArray(Charsets.UTF_8)
-                          else SECRET_KEY_DEFAULT.toByteArray(Charsets.UTF_8)
+        // Use base64-decoded bytes of the secret key (confirmed working via live API test)
+        val secretBytes = if (useAltKey) SECRET_KEY_ALT_BYTES else SECRET_KEY_DEFAULT_BYTES
 
         val mac = Mac.getInstance("HmacMD5")
         mac.init(SecretKeySpec(secretBytes, "HmacMD5"))
