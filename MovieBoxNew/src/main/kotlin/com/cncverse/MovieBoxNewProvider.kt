@@ -68,6 +68,8 @@ class MovieBoxNewProvider : MainAPI() {
             "https://api3.aoneroom.com",
             "https://api6sg.aoneroom.com",
         )
+
+        var bearerToken: String? = null
     }
 
     override var mainUrl = HOST_POOL[0]
@@ -314,6 +316,18 @@ class MovieBoxNewProvider : MainAPI() {
             app.get(url, headers = getHeaders)
         }
 
+        // Harvest token from x-user header if available
+        val xUser = response.headers["x-user"]
+        if (!xUser.isNullOrBlank()) {
+            try {
+                val json = jacksonObjectMapper().readTree(xUser)
+                val token = json["token"]?.asText()
+                if (!token.isNullOrBlank()) {
+                    bearerToken = token
+                }
+            } catch (_: Exception) {}
+        }
+
         val responseBody = response.body.string()
         val data = try {
             val mapper = jacksonObjectMapper()
@@ -352,7 +366,8 @@ class MovieBoxNewProvider : MainAPI() {
         val xClientToken = generateXClientToken()
         val xTrSignature = generateXTrSignature("POST", "application/json", "application/json; charset=utf-8", url, jsonBody)
 
-        val headers = mapOf(
+        val token = getOrFetchToken(ua, clientInfo)
+        val headers = mutableMapOf(
             "user-agent"      to ua,
             "accept"          to "application/json",
             "content-type"    to "application/json; charset=utf-8",
@@ -362,6 +377,9 @@ class MovieBoxNewProvider : MainAPI() {
             "x-client-info"   to clientInfo,
             "x-client-status" to "0",
         )
+        if (!token.isNullOrBlank()) {
+            headers["Authorization"] = "Bearer $token"
+        }
 
         val requestBody = jsonBody.toRequestBody("application/json; charset=utf-8".toMediaType())
         val response = app.post(url, headers = headers, requestBody = requestBody)
@@ -411,7 +429,8 @@ class MovieBoxNewProvider : MainAPI() {
         val xClientToken = generateXClientToken()
         val xTrSignature = generateXTrSignature("GET", "application/json", "application/json", finalUrl)
 
-        val headers = mapOf(
+        val token = getOrFetchToken(ua, clientInfo)
+        val headers = mutableMapOf(
             "user-agent"      to ua,
             "accept"          to "application/json",
             "content-type"    to "application/json",
@@ -421,6 +440,9 @@ class MovieBoxNewProvider : MainAPI() {
             "x-client-info"   to clientInfo,
             "x-client-status" to "0",
         )
+        if (!token.isNullOrBlank()) {
+            headers["Authorization"] = "Bearer $token"
+        }
 
         val response = app.get(finalUrl, headers = headers)
         if (response.code != 200) {
@@ -604,10 +626,11 @@ class MovieBoxNewProvider : MainAPI() {
             val episode = if (parts.size > 2) parts[2].toIntOrNull() ?: 0 else 0
 
             // ── Step 1: get subject details & extract x-user bearer token ──────
+            val token = getOrFetchToken(ua, clientInfo)
             val subjectUrl = "$mainUrl/wefeed-mobile-bff/subject-api/get?subjectId=$originalSubjectId"
             val subjectToken = generateXClientToken()
             val subjectSig   = generateXTrSignature("GET", "application/json", "application/json", subjectUrl)
-            val subjectHeaders = mapOf(
+            val subjectHeaders = mutableMapOf(
                 "user-agent"      to ua,
                 "accept"          to "application/json",
                 "content-type"    to "application/json",
@@ -617,6 +640,9 @@ class MovieBoxNewProvider : MainAPI() {
                 "x-client-info"   to clientInfo,
                 "x-client-status" to "0",
             )
+            if (!token.isNullOrBlank()) {
+                subjectHeaders["Authorization"] = "Bearer $token"
+            }
 
             val subjectResponse = app.get(subjectUrl, headers = subjectHeaders)
             val mapper = jacksonObjectMapper()
@@ -624,7 +650,7 @@ class MovieBoxNewProvider : MainAPI() {
             // Collect dub IDs
             val subjectIds = mutableListOf<Pair<String, String>>()
             var originalLanguageName = "Original"
-            var bearerToken: String? = null
+            var bearerToken = token
 
             if (subjectResponse.code == 200) {
                 val subjectRoot = mapper.readTree(subjectResponse.body.string())
@@ -647,14 +673,12 @@ class MovieBoxNewProvider : MainAPI() {
             if (!xUserHeader.isNullOrBlank()) {
                 try {
                     val xUserJson = mapper.readTree(xUserHeader)
-                    bearerToken = xUserJson["token"]?.asText()
+                    val freshToken = xUserJson["token"]?.asText()
+                    if (!freshToken.isNullOrBlank()) {
+                        bearerToken = freshToken
+                        MovieBoxNewProvider.bearerToken = freshToken
+                    }
                 } catch (_: Exception) {}
-            }
-
-            // If we didn't get a token from the subject call, try a direct login call
-            // (some API versions return 441 when no bearer token is provided)
-            if (bearerToken.isNullOrBlank()) {
-                bearerToken = fetchAnonymousToken(ua, clientInfo)
             }
 
             subjectIds.add(0, Pair(originalSubjectId, originalLanguageName))
@@ -736,6 +760,18 @@ class MovieBoxNewProvider : MainAPI() {
                 json["token"]?.asText()
             } else null
         } catch (_: Exception) { null }
+    }
+
+    private suspend fun getOrFetchToken(ua: String, clientInfo: String): String? {
+        val currentToken = bearerToken
+        if (!currentToken.isNullOrBlank()) {
+            return currentToken
+        }
+        val fetched = fetchAnonymousToken(ua, clientInfo)
+        if (!fetched.isNullOrBlank()) {
+            bearerToken = fetched
+        }
+        return fetched
     }
 
     private suspend fun processStreams(
