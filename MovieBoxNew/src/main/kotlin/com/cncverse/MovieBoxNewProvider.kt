@@ -118,16 +118,20 @@ class MovieBoxNewProvider : MainAPI() {
         body: String?,
         timestamp: Long
     ): String {
-        val parsed = Uri.parse(url)
+        val parsed = java.net.URI(url)
         val path = parsed.path ?: ""
+        val queryStr = parsed.query
 
-        // Build query string with sorted parameters
-        val query = if (!parsed.query.isNullOrEmpty() && parsed.queryParameterNames.isNotEmpty()) {
-            parsed.queryParameterNames.sorted().joinToString("&") { key ->
-                parsed.getQueryParameters(key).joinToString("&") { value ->
-                    "$key=$value"
+        val query = if (!queryStr.isNullOrBlank()) {
+            queryStr.split("&")
+                .map { it.split("=", limit = 2) }
+                .filter { it.isNotEmpty() && it[0].isNotBlank() }
+                .groupBy({ it[0] }, { if (it.size > 1) it[1] else "" })
+                .toSortedMap()
+                .flatMap { (key, values) ->
+                    values.map { "$key=$it" }
                 }
-            }
+                .joinToString("&")
         } else ""
 
         val canonicalUrl = if (query.isNotEmpty()) "$path?$query" else path
@@ -355,7 +359,11 @@ class MovieBoxNewProvider : MainAPI() {
 
     override suspend fun search(query: String, page: Int): SearchResponseList {
         val url = "$mainUrl/wefeed-mobile-bff/subject-api/search/v2"
-        val jsonBody = """{"page": $page, "perPage": 20, "keyword": "$query"}"""
+        val jsonBody = JSONObject().apply {
+            put("page", page)
+            put("perPage", 20)
+            put("keyword", query)
+        }.toString()
 
         val (brand, model) = randomBrandModel()
         val versionCode = versionCodes.random()
@@ -366,7 +374,6 @@ class MovieBoxNewProvider : MainAPI() {
         val xClientToken = generateXClientToken()
         val xTrSignature = generateXTrSignature("POST", "application/json", "application/json; charset=utf-8", url, jsonBody)
 
-        val token = getOrFetchToken(ua, clientInfo)
         val headers = mutableMapOf(
             "user-agent"      to ua,
             "accept"          to "application/json",
@@ -377,37 +384,59 @@ class MovieBoxNewProvider : MainAPI() {
             "x-client-info"   to clientInfo,
             "x-client-status" to "0",
         )
+
+        var token = getOrFetchToken(ua, clientInfo)
         if (!token.isNullOrBlank()) {
             headers["Authorization"] = "Bearer $token"
         }
 
         val requestBody = jsonBody.toRequestBody("application/json; charset=utf-8".toMediaType())
-        val response = app.post(url, headers = headers, requestBody = requestBody)
+        var response = app.post(url, headers = headers, requestBody = requestBody)
+
+        if (response.code == 441 || response.code == 401) {
+            bearerToken = null
+            token = getOrFetchToken(ua, clientInfo)
+            if (!token.isNullOrBlank()) {
+                headers["Authorization"] = "Bearer $token"
+                response = app.post(url, headers = headers, requestBody = requestBody)
+            }
+        }
+
+        if (response.code != 200) {
+            return newSearchResponseList(emptyList())
+        }
 
         val responseBody = response.body.string()
         val mapper = jacksonObjectMapper()
         val root = mapper.readTree(responseBody)
-        val results = root.get("data")?.get("results") ?: return newSearchResponseList(emptyList())
         val searchList = mutableListOf<SearchResponse>()
 
-        for (result in results) {
-            val subjects = result["subjects"] ?: continue
-            for (subject in subjects) {
-                val title = subject["title"]?.asText() ?: continue
-                val id    = subject["subjectId"]?.asText() ?: continue
-                val coverImg = subject["cover"]?.get("url")?.asText()
-                val type = when (subject["subjectType"]?.asInt() ?: 1) {
-                    2    -> TvType.TvSeries
-                    else -> TvType.Movie
-                }
-                searchList.add(
-                    newMovieSearchResponse(name = title, url = id, type = type) {
-                        this.posterUrl = coverImg
-                        this.score = Score.from10(subject["imdbRatingValue"]?.asText())
+        try {
+            val results = root.get("data")?.get("results")
+            if (results != null && results.isArray) {
+                for (result in results) {
+                    val subjects = result["subjects"]
+                    if (subjects != null && subjects.isArray) {
+                        for (subject in subjects) {
+                            val title = subject["title"]?.asText() ?: continue
+                            val id    = subject["subjectId"]?.asText() ?: continue
+                            val coverImg = subject["cover"]?.get("url")?.asText()
+                            val type = when (subject["subjectType"]?.asInt() ?: 1) {
+                                2    -> TvType.TvSeries
+                                else -> TvType.Movie
+                            }
+                            searchList.add(
+                                newMovieSearchResponse(name = title, url = id, type = type) {
+                                    this.posterUrl = coverImg
+                                    this.score = Score.from10(subject["imdbRatingValue"]?.asText())
+                                }
+                            )
+                        }
                     }
-                )
+                }
             }
-        }
+        } catch (_: Exception) {}
+
         return searchList.toNewSearchResponseList()
     }
 
@@ -429,7 +458,6 @@ class MovieBoxNewProvider : MainAPI() {
         val xClientToken = generateXClientToken()
         val xTrSignature = generateXTrSignature("GET", "application/json", "application/json", finalUrl)
 
-        val token = getOrFetchToken(ua, clientInfo)
         val headers = mutableMapOf(
             "user-agent"      to ua,
             "accept"          to "application/json",
@@ -440,11 +468,23 @@ class MovieBoxNewProvider : MainAPI() {
             "x-client-info"   to clientInfo,
             "x-client-status" to "0",
         )
+
+        var token = getOrFetchToken(ua, clientInfo)
         if (!token.isNullOrBlank()) {
             headers["Authorization"] = "Bearer $token"
         }
 
-        val response = app.get(finalUrl, headers = headers)
+        var response = app.get(finalUrl, headers = headers)
+
+        if (response.code == 441 || response.code == 401) {
+            bearerToken = null
+            token = getOrFetchToken(ua, clientInfo)
+            if (!token.isNullOrBlank()) {
+                headers["Authorization"] = "Bearer $token"
+                response = app.get(finalUrl, headers = headers)
+            }
+        }
+
         if (response.code != 200) {
             throw ErrorLoadingException("Failed to load: HTTP ${response.code}")
         }
@@ -626,7 +666,7 @@ class MovieBoxNewProvider : MainAPI() {
             val episode = if (parts.size > 2) parts[2].toIntOrNull() ?: 0 else 0
 
             // ── Step 1: get subject details & extract x-user bearer token ──────
-            val token = getOrFetchToken(ua, clientInfo)
+            var token = getOrFetchToken(ua, clientInfo)
             val subjectUrl = "$mainUrl/wefeed-mobile-bff/subject-api/get?subjectId=$originalSubjectId"
             val subjectToken = generateXClientToken()
             val subjectSig   = generateXTrSignature("GET", "application/json", "application/json", subjectUrl)
@@ -644,7 +684,16 @@ class MovieBoxNewProvider : MainAPI() {
                 subjectHeaders["Authorization"] = "Bearer $token"
             }
 
-            val subjectResponse = app.get(subjectUrl, headers = subjectHeaders)
+            var subjectResponse = app.get(subjectUrl, headers = subjectHeaders)
+
+            if (subjectResponse.code == 441 || subjectResponse.code == 401) {
+                MovieBoxNewProvider.bearerToken = null
+                token = getOrFetchToken(ua, clientInfo)
+                if (!token.isNullOrBlank()) {
+                    subjectHeaders["Authorization"] = "Bearer $token"
+                    subjectResponse = app.get(subjectUrl, headers = subjectHeaders)
+                }
+            }
             val mapper = jacksonObjectMapper()
 
             // Collect dub IDs
