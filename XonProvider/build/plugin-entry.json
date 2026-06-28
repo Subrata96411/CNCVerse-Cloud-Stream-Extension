@@ -1,0 +1,22 @@
+{
+    "iconUrl": "https://play-lh.googleusercontent.com/zVq_wAus2snoO-ggyI6IomlsCzfybAozQOGYpBrv71r1--rOYOYWsr_N7DWwVp9t7ro=s248-rw",
+    "fileHash": "sha256-95c9c89a468129a9e6043fb2904e7258422fee54c6ba2ce842d8de0042a895b9",
+    "apiVersion": 1,
+    "repositoryUrl": "https://github.com/Subrata96411/CNCVerse-Cloud-Stream-Extension",
+    "fileSize": 41029,
+    "status": 1,
+    "language": "ta",
+    "authors": [
+        "NivinCNC"
+    ],
+    "tvTypes": [
+        "TvSeries",
+        "Movie",
+        "Anime"
+    ],
+    "version": 24,
+    "internalName": "XonProvider",
+    "description": "Xon Provider for Anime and Cartoons - Tamil, Hindi, Telugu, English, Japanese",
+    "url": "https://raw.githubusercontent.com/Subrata96411/CNCVerse-Cloud-Stream-Extension/builds/XonProvider.cs3",
+    "name": "XonProvider"
+}

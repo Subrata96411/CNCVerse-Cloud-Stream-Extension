@@ -1,0 +1,23 @@
+{
+    "iconUrl": "https://mlsbd.co/wp-content/uploads/2020/08/MLSBD-Logo.png",
+    "fileHash": "sha256-23688280316760eca3965104110801751296af7d51fbba2292ecb1396af0a9e7",
+    "apiVersion": 1,
+    "repositoryUrl": "https://github.com/Subrata96411/CNCVerse-Cloud-Stream-Extension",
+    "fileSize": 48509,
+    "status": 1,
+    "language": "bn",
+    "authors": [
+        "NivinCNC"
+    ],
+    "tvTypes": [
+        "Movie",
+        "TvSeries",
+        "AnimeMovie",
+        "AsianDrama"
+    ],
+    "version": 21,
+    "internalName": "MLSBDProvider",
+    "description": "The largest movie link store in Bangladesh",
+    "url": "https://raw.githubusercontent.com/Subrata96411/CNCVerse-Cloud-Stream-Extension/builds/MLSBDProvider.cs3",
+    "name": "MLSBDProvider"
+}

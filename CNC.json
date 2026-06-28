@@ -1,9 +1,9 @@
 {
-    "pluginLists":  [
-                        "https://raw.githubusercontent.com/Subrata96411/CNCVerse-Cloud-Stream-Extension/builds/plugins.json"
-                    ],
-    "description":  "Ad-free \u0026 Popup-free CNCVerse CloudStream Extension Repository",
-    "name":  "CNC Repo (Clean \u0026 Ad-Free)",
-    "manifestVersion":  1,
-    "iconUrl":  "https://raw.githubusercontent.com/Subrata96411/CNCVerse-Cloud-Stream-Extension/builds/cnc.png"
+  "name": "CNC Repo (Clean & Ad-Free)",
+  "iconUrl": "https://raw.githubusercontent.com/Subrata96411/CNCVerse-Cloud-Stream-Extension/builds/cnc.png",
+  "description": "Ad-free & Popup-free CNCVerse CloudStream Extension Repository",
+  "manifestVersion": 1,
+  "pluginLists": [
+    "https://raw.githubusercontent.com/Subrata96411/CNCVerse-Cloud-Stream-Extension/builds/plugins.json"
+  ]
 }

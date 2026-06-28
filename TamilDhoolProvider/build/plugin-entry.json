@@ -1,0 +1,20 @@
+{
+    "iconUrl": "https://github.com/NivinCNC/CNCVerse-Cloud-Stream-Extension/raw/refs/heads/master/TamilDhoolProvider/icon.png",
+    "fileHash": "sha256-c2f68d5a823f75f4ade9423e01022285fb978b622682881164dd4980c2174ce6",
+    "apiVersion": 1,
+    "repositoryUrl": "https://github.com/Subrata96411/CNCVerse-Cloud-Stream-Extension",
+    "fileSize": 20640,
+    "status": 1,
+    "language": "ta",
+    "authors": [
+        "NivinCNC"
+    ],
+    "tvTypes": [
+        "TvSeries"
+    ],
+    "version": 25,
+    "internalName": "TamilDhoolProvider",
+    "description": "Tamil Tv Serial/Shows Provider",
+    "url": "https://raw.githubusercontent.com/Subrata96411/CNCVerse-Cloud-Stream-Extension/builds/TamilDhoolProvider.cs3",
+    "name": "TamilDhoolProvider"
+}

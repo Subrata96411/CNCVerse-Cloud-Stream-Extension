@@ -1,0 +1,22 @@
+{
+    "iconUrl": "https://www.google.com/s2/favicons?domain=rezka.ag&sz=%size%",
+    "fileHash": "sha256-99f93bb79ef9ce9d5c1d08f071fa56e1e646c9d900f72e9f2df21c8f55311a9c",
+    "apiVersion": 1,
+    "repositoryUrl": "https://github.com/Subrata96411/CNCVerse-Cloud-Stream-Extension",
+    "fileSize": 32911,
+    "status": 1,
+    "language": "ru",
+    "authors": [
+        "Hexated, NivinCNC"
+    ],
+    "tvTypes": [
+        "AsianDrama",
+        "Anime",
+        "TvSeries",
+        "Movie"
+    ],
+    "version": 23,
+    "internalName": "HDrezkaProvider",
+    "url": "https://raw.githubusercontent.com/Subrata96411/CNCVerse-Cloud-Stream-Extension/builds/HDrezkaProvider.cs3",
+    "name": "HDrezkaProvider"
+}

@@ -1,0 +1,21 @@
+{
+    "iconUrl": "https://modapk.world/wp-content/uploads/2025/11/Et-90x90.png",
+    "fileHash": "sha256-22f4caac3271b62c830af57b790d47de7e1fded1fc7cfdedeb8a1ed4727ea7a0",
+    "apiVersion": 1,
+    "repositoryUrl": "https://github.com/Subrata96411/CNCVerse-Cloud-Stream-Extension",
+    "fileSize": 37600,
+    "status": 1,
+    "language": "ta",
+    "authors": [
+        "CNCVerse"
+    ],
+    "tvTypes": [
+        "Movie",
+        "TvSeries"
+    ],
+    "version": 24,
+    "internalName": "CineTvProvider",
+    "description": "Clone of Cinema, Memesapp , FilmTV etc",
+    "url": "https://raw.githubusercontent.com/Subrata96411/CNCVerse-Cloud-Stream-Extension/builds/CineTvProvider.cs3",
+    "name": "CineTvProvider"
+}

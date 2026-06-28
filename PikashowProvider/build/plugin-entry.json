@@ -1,0 +1,21 @@
+{
+    "iconUrl": "https://raw.githubusercontent.com/NivinCNC/CNCVerse-Cloud-Stream-Extension/refs/heads/master/PikashowProvider/logo.png",
+    "fileHash": "sha256-20ebde3199f59ae27ffbd5ba8d9f1943287a8549a6507d68360d6f9a2cd7e434",
+    "apiVersion": 1,
+    "repositoryUrl": "https://github.com/Subrata96411/CNCVerse-Cloud-Stream-Extension",
+    "fileSize": 59210,
+    "status": 1,
+    "language": "ta",
+    "authors": [
+        "NivinCNC"
+    ],
+    "tvTypes": [
+        "Movie",
+        "TvSeries"
+    ],
+    "version": 21,
+    "internalName": "PikashowProvider",
+    "description": "Stream movies and series from Pikashow",
+    "url": "https://raw.githubusercontent.com/Subrata96411/CNCVerse-Cloud-Stream-Extension/builds/PikashowProvider.cs3",
+    "name": "PikashowProvider"
+}

@@ -1,0 +1,20 @@
+{
+    "iconUrl": "https://www.google.com/s2/favicons?domain=playztv.top&sz=%size%",
+    "fileHash": "sha256-7c27bcc4b4c23d89b500a1301951782e181bdeb688fd02c9d978f82d6fa3b224",
+    "apiVersion": 1,
+    "repositoryUrl": "https://github.com/Subrata96411/CNCVerse-Cloud-Stream-Extension",
+    "fileSize": 78745,
+    "status": 1,
+    "language": "ta",
+    "authors": [
+        "NivinCNC"
+    ],
+    "tvTypes": [
+        "Live"
+    ],
+    "version": 16,
+    "internalName": "PlayZTVProvider",
+    "description": "Watch Live TV channels & sports via PlayZTV",
+    "url": "https://raw.githubusercontent.com/Subrata96411/CNCVerse-Cloud-Stream-Extension/builds/PlayZTVProvider.cs3",
+    "name": "PlayZTVProvider"
+}
