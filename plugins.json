@@ -1,5 +1,26 @@
 [
     {
+        "iconUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Amazon_Prime_Video_logo.svg/1200px-Amazon_Prime_Video_logo.svg.png",
+        "fileHash": "sha256-976830c64f666a6f0a9793b2916f46f32a798e8a0d7ba0dda6790387127302b3",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/Subrata96411/CNCVerse-Cloud-Stream-Extension",
+        "fileSize": 30853,
+        "status": 3,
+        "language": "en",
+        "authors": [
+            "NivinCNC"
+        ],
+        "tvTypes": [
+            "Movie",
+            "TvSeries"
+        ],
+        "version": 1,
+        "internalName": "AmazonProvider",
+        "description": "Amazon Prime Video \u2013 Browse and stream content using your own Amazon account cookies. Note: DRM-protected content may not play on all devices.",
+        "url": "https://raw.githubusercontent.com/Subrata96411/CNCVerse-Cloud-Stream-Extension/builds/AmazonProvider.cs3",
+        "name": "AmazonProvider"
+    },
+    {
         "iconUrl": "https://play-lh.googleusercontent.com/G9s84Cm1TDnKDX2P8nipS_s60cuCnYtjBRRLespF8nivjXmbV9tF1fY37clZhXMLaA",
         "fileHash": "sha256-c62f9bbf71f96e9b77ec2561ce13ff960df4da4ce5bceb060cfe86cff1c901c8",
         "apiVersion": 1,
@@ -45,10 +66,10 @@
     },
     {
         "iconUrl": "https://modapk.world/wp-content/uploads/2025/11/Et-90x90.png",
-        "fileHash": "sha256-cdb55ac8abcd3d4f46e79fe7eb2ff084912bfa0220b2add83e038aaff14d62d1",
+        "fileHash": "sha256-22f4caac3271b62c830af57b790d47de7e1fded1fc7cfdedeb8a1ed4727ea7a0",
         "apiVersion": 1,
         "repositoryUrl": "https://github.com/Subrata96411/CNCVerse-Cloud-Stream-Extension",
-        "fileSize": 37604,
+        "fileSize": 37600,
         "status": 1,
         "language": "ta",
         "authors": [
@@ -148,7 +169,7 @@
     },
     {
         "iconUrl": "https://raw.githubusercontent.com/NivinCNC/CNCVerse-Cloud-Stream-Extension/master/EinthusanProvider/icon.png",
-        "fileHash": "sha256-adccd5bd121d76c56204c0423d85c450a4286bf1598e23b135c615f1e550145f",
+        "fileHash": "sha256-43c60469498fab7966b692c9e5e6f5e199d7a93c5421de0eba626cd355671200",
         "apiVersion": 1,
         "repositoryUrl": "https://github.com/Subrata96411/CNCVerse-Cloud-Stream-Extension",
         "fileSize": 17314,
@@ -188,10 +209,10 @@
     },
     {
         "iconUrl": "https://images.dwncdn.net/images/t_app-icon-l/p/b0c9663c-0d61-4941-b12f-91c58c06189f/1137087733/hdo-box-logo",
-        "fileHash": "sha256-68dbb1d51c270fb4ed4173c2770e354ae36a7d1edcb5d0a3015d4e3a8a79c891",
+        "fileHash": "sha256-87e584d70c2841eadd83f64c25214def1512ed3747848c536d53d4492c8ff1ad",
         "apiVersion": 1,
         "repositoryUrl": "https://github.com/Subrata96411/CNCVerse-Cloud-Stream-Extension",
-        "fileSize": 24012,
+        "fileSize": 24005,
         "status": 0,
         "language": "ta",
         "authors": [
@@ -209,10 +230,10 @@
     },
     {
         "iconUrl": "https://www.google.com/s2/favicons?domain=rezka.ag&sz=%size%",
-        "fileHash": "sha256-91da0fa940109ad6d413fe107504e0908afac7cfda358494e7ff21883d0ebb24",
+        "fileHash": "sha256-b7a5f3f4a60d5afe275bb6fd55cbc204b9da65fb2523b45e4f80144ce6572a46",
         "apiVersion": 1,
         "repositoryUrl": "https://github.com/Subrata96411/CNCVerse-Cloud-Stream-Extension",
-        "fileSize": 31781,
+        "fileSize": 31786,
         "status": 1,
         "language": "ru",
         "authors": [
@@ -274,6 +295,27 @@
     },
     {
         "iconUrl": "https://github.com/NivinCNC/CNCVerse-Cloud-Stream-Extension/raw/refs/heads/master/MovieBoxProvider/icon.png",
+        "fileHash": "sha256-c57a851764a033c4b120b0e2db07512bb52a72c0bd0c870f0fd078b33010fcaa",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/Subrata96411/CNCVerse-Cloud-Stream-Extension",
+        "fileSize": 74255,
+        "status": 1,
+        "language": "hi",
+        "authors": [
+            "NivinCNC"
+        ],
+        "tvTypes": [
+            "Movie",
+            "TvSeries"
+        ],
+        "version": 1,
+        "internalName": "MovieBoxNew",
+        "description": "MovieBox New - Multi Language Movies and Series Provider (Fixed Auth)",
+        "url": "https://raw.githubusercontent.com/Subrata96411/CNCVerse-Cloud-Stream-Extension/builds/MovieBoxNew.cs3",
+        "name": "MovieBoxNew"
+    },
+    {
+        "iconUrl": "https://github.com/NivinCNC/CNCVerse-Cloud-Stream-Extension/raw/refs/heads/master/MovieBoxProvider/icon.png",
         "fileHash": "sha256-42484c0c4460ef69f87eb173bb367749503690c1482688dc6ad870ded413c6ac",
         "apiVersion": 1,
         "repositoryUrl": "https://github.com/Subrata96411/CNCVerse-Cloud-Stream-Extension",
@@ -295,10 +337,10 @@
     },
     {
         "iconUrl": "https://github.com/NivinCNC/CNCVerse-Cloud-Stream-Extension/raw/refs/heads/master/MovieBoxProviderIN/icon.png",
-        "fileHash": "sha256-85950b2189e1020f57446c49a8a1e7592519708ca148c27df14bcf3296c5617b",
+        "fileHash": "sha256-f2622e7948ef49ae54f75855b14cd979156bdbb8188c5f6eadf2a8e620775e23",
         "apiVersion": 1,
         "repositoryUrl": "https://github.com/Subrata96411/CNCVerse-Cloud-Stream-Extension",
-        "fileSize": 67201,
+        "fileSize": 67191,
         "status": 1,
         "language": "ta",
         "authors": [
@@ -316,10 +358,10 @@
     },
     {
         "iconUrl": "https://movielinkbd.one/img/favicon-192x192.png",
-        "fileHash": "sha256-b02a3e81e3a1a5f773026ff9dbefed351deae8eebe679fd76a9d5f7dd01d79ad",
+        "fileHash": "sha256-d5b7f5be7b956df31b79f05f64816ff75ead59ed03e6f89d3f660d99652b4b35",
         "apiVersion": 1,
         "repositoryUrl": "https://github.com/Subrata96411/CNCVerse-Cloud-Stream-Extension",
-        "fileSize": 24589,
+        "fileSize": 24587,
         "status": 1,
         "language": "bn",
         "authors": [
@@ -420,10 +462,10 @@
     },
     {
         "iconUrl": "https://github.com/NivinCNC/CNCVerse-Cloud-Stream-Extension/raw/refs/heads/master/Rtally/icon.png",
-        "fileHash": "sha256-cc79b558b01815e33cee554027608cc6ce0a001bac33c8d170f35fe11fbc4ab2",
+        "fileHash": "sha256-f1e75c350b843b4a04dfe54c9e45c94696ebde9112edf13148405d0584db5b68",
         "apiVersion": 1,
         "repositoryUrl": "https://github.com/Subrata96411/CNCVerse-Cloud-Stream-Extension",
-        "fileSize": 15313,
+        "fileSize": 15314,
         "status": 1,
         "language": "ta",
         "authors": [
@@ -567,10 +609,10 @@
     },
     {
         "iconUrl": "https://play-lh.googleusercontent.com/zVq_wAus2snoO-ggyI6IomlsCzfybAozQOGYpBrv71r1--rOYOYWsr_N7DWwVp9t7ro=s248-rw",
-        "fileHash": "sha256-410f769270bbeb4cc6daf50239428634d832a9cf965a7e21ccbf3f7a3786eeb2",
+        "fileHash": "sha256-4322263c231615140650bc3b32005fc78d1c8c9c897b4da632b976f44cbcd189",
         "apiVersion": 1,
         "repositoryUrl": "https://github.com/Subrata96411/CNCVerse-Cloud-Stream-Extension",
-        "fileSize": 40241,
+        "fileSize": 40226,
         "status": 1,
         "language": "ta",
         "authors": [
