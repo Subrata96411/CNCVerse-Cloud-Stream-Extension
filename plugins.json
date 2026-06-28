@@ -295,10 +295,10 @@
     },
     {
         "iconUrl": "https://github.com/NivinCNC/CNCVerse-Cloud-Stream-Extension/raw/refs/heads/master/MovieBoxProvider/icon.png",
-        "fileHash": "sha256-c57a851764a033c4b120b0e2db07512bb52a72c0bd0c870f0fd078b33010fcaa",
+        "fileHash": "sha256-ade1b3c4aa7603b7858f0dd29b73aca33b204242af0356fdf8d0627e101fa9de",
         "apiVersion": 1,
         "repositoryUrl": "https://github.com/Subrata96411/CNCVerse-Cloud-Stream-Extension",
-        "fileSize": 74255,
+        "fileSize": 73594,
         "status": 1,
         "language": "hi",
         "authors": [
