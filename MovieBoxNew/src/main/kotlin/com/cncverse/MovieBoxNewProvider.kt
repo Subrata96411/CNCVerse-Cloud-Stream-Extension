@@ -289,7 +289,7 @@ class MovieBoxNewProvider : MainAPI() {
 
         val xClientToken = generateXClientToken()
         val xTrSignaturePost = generateXTrSignature("POST", "application/json", "application/json; charset=utf-8", url, jsonBody)
-        val xTrSignatureGet  = generateXTrSignature("GET", "application/json", "application/json", url)
+        val xTrSignatureGet  = generateXTrSignature("GET", "application/json", "", url)
 
         val postHeaders = mapOf(
             "user-agent"      to ua,
@@ -304,7 +304,6 @@ class MovieBoxNewProvider : MainAPI() {
         val getHeaders = mapOf(
             "user-agent"      to ua,
             "accept"          to "application/json",
-            "content-type"    to "application/json",
             "connection"      to "keep-alive",
             "x-client-token"  to xClientToken,
             "x-tr-signature"  to xTrSignatureGet,
@@ -455,12 +454,11 @@ class MovieBoxNewProvider : MainAPI() {
         val clientInfo = buildClientInfo(brand, model, versionCode)
 
         val xClientToken = generateXClientToken()
-        val xTrSignature = generateXTrSignature("GET", "application/json", "application/json", finalUrl)
+        val xTrSignature = generateXTrSignature("GET", "application/json", "", finalUrl)
 
         val headers = mutableMapOf(
             "user-agent"      to ua,
             "accept"          to "application/json",
-            "content-type"    to "application/json",
             "connection"      to "keep-alive",
             "x-client-token"  to xClientToken,
             "x-tr-signature"  to xTrSignature,
@@ -561,7 +559,7 @@ class MovieBoxNewProvider : MainAPI() {
 
             for (subjectId in allSubjectIds) {
                 val seasonUrl = "$mainUrl/wefeed-mobile-bff/subject-api/season-info?subjectId=$subjectId"
-                val seasonSig = generateXTrSignature("GET", "application/json", "application/json", seasonUrl)
+                val seasonSig = generateXTrSignature("GET", "application/json", "", seasonUrl)
                 val seasonHeaders = headers.toMutableMap().apply { put("x-tr-signature", seasonSig) }
                 val seasonResponse = app.get(seasonUrl, headers = seasonHeaders)
                 if (seasonResponse.code != 200) continue
@@ -668,11 +666,10 @@ class MovieBoxNewProvider : MainAPI() {
             var token = getOrFetchToken(ua, clientInfo)
             val subjectUrl = "$mainUrl/wefeed-mobile-bff/subject-api/get?subjectId=$originalSubjectId"
             val subjectToken = generateXClientToken()
-            val subjectSig   = generateXTrSignature("GET", "application/json", "application/json", subjectUrl)
+            val subjectSig   = generateXTrSignature("GET", "application/json", "", subjectUrl)
             val subjectHeaders = mutableMapOf(
                 "user-agent"      to ua,
                 "accept"          to "application/json",
-                "content-type"    to "application/json",
                 "connection"      to "keep-alive",
                 "x-client-token"  to subjectToken,
                 "x-tr-signature"  to subjectSig,
@@ -736,12 +733,11 @@ class MovieBoxNewProvider : MainAPI() {
                 try {
                     val playUrl = "$mainUrl/wefeed-mobile-bff/subject-api/play-info?subjectId=$subjectId&se=$season&ep=$episode"
                     val playToken = generateXClientToken()
-                    val playSig   = generateXTrSignature("GET", "application/json", "application/json", playUrl)
+                    val playSig   = generateXTrSignature("GET", "application/json", "", playUrl)
 
                     val playHeaders = buildMap<String, String> {
                         put("user-agent",      ua)
                         put("accept",          "application/json")
-                        put("content-type",    "application/json")
                         put("connection",      "keep-alive")
                         put("x-client-token",  playToken)
                         put("x-tr-signature",  playSig)
@@ -791,11 +787,10 @@ class MovieBoxNewProvider : MainAPI() {
         return try {
             val pingUrl = "$mainUrl/wefeed-mobile-bff/tab/ranking-list?tabId=0&categoryType=4516404531735022304&page=1&perPage=1"
             val xct = generateXClientToken()
-            val sig = generateXTrSignature("GET", "application/json", "application/json", pingUrl)
+            val sig = generateXTrSignature("GET", "application/json", "", pingUrl)
             val headers = mapOf(
                 "user-agent"      to ua,
                 "accept"          to "application/json",
-                "content-type"    to "application/json",
                 "x-client-token"  to xct,
                 "x-tr-signature"  to sig,
                 "x-client-info"   to clientInfo,
@@ -949,7 +944,7 @@ class MovieBoxNewProvider : MainAPI() {
         try {
             val fallbackUrl = "$mainUrl/wefeed-mobile-bff/subject-api/get?subjectId=$subjectId"
             val fallbackHeaders = existingHeaders.toMutableMap().apply {
-                put("x-tr-signature", generateXTrSignature("GET", "application/json", "application/json", fallbackUrl))
+                put("x-tr-signature", generateXTrSignature("GET", "application/json", "", fallbackUrl))
             }
             val fbResponse = app.get(fallbackUrl, headers = fallbackHeaders)
             if (fbResponse.code != 200) return
