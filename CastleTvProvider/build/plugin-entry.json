@@ -1,0 +1,21 @@
+{
+    "iconUrl": "https://github.com/NivinCNC/CNCVerse-Cloud-Stream-Extension/raw/refs/heads/master/CastleTvProvider/icon.png",
+    "fileHash": "sha256-41cb875ca7f1734e11a64a94b933601b178546078ee6876982e3ea5ef231a83b",
+    "apiVersion": 1,
+    "repositoryUrl": "https://github.com/Subrata96411/CNCVerse-Cloud-Stream-Extension",
+    "fileSize": 64703,
+    "status": 1,
+    "language": "ta",
+    "authors": [
+        "CNCVerse"
+    ],
+    "tvTypes": [
+        "Movie",
+        "TvSeries"
+    ],
+    "version": 29,
+    "internalName": "CastleTvProvider",
+    "description": "Castle TV Movies and Series Provider",
+    "url": "https://raw.githubusercontent.com/Subrata96411/CNCVerse-Cloud-Stream-Extension/builds/CastleTvProvider.cs3",
+    "name": "CastleTvProvider"
+}

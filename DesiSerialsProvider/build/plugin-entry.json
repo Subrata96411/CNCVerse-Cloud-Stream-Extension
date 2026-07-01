@@ -1,0 +1,20 @@
+{
+    "iconUrl": "https://www.google.com/s2/favicons?domain=desi-serials.to&sz=%size%",
+    "fileHash": "sha256-bf6f7ad4be48abb022197dadadfeedbe0fba3749a9261b3e2a96783e67c44dc9",
+    "apiVersion": 1,
+    "repositoryUrl": "https://github.com/Subrata96411/CNCVerse-Cloud-Stream-Extension",
+    "fileSize": 32493,
+    "status": 1,
+    "language": "hi",
+    "authors": [
+        "NivinCNC"
+    ],
+    "tvTypes": [
+        "TvSeries"
+    ],
+    "version": 19,
+    "internalName": "DesiSerialsProvider",
+    "description": "Desi Serials Tv Shows Provider",
+    "url": "https://raw.githubusercontent.com/Subrata96411/CNCVerse-Cloud-Stream-Extension/builds/DesiSerialsProvider.cs3",
+    "name": "DesiSerialsProvider"
+}

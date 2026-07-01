@@ -1,0 +1,24 @@
+{
+    "iconUrl": "https://github.com/NivinCNC/CNCVerse-Cloud-Stream-Extension/raw/refs/heads/master/Rtally/icon.png",
+    "fileHash": "sha256-f1e75c350b843b4a04dfe54c9e45c94696ebde9112edf13148405d0584db5b68",
+    "apiVersion": 1,
+    "repositoryUrl": "https://github.com/Subrata96411/CNCVerse-Cloud-Stream-Extension",
+    "fileSize": 15314,
+    "status": 1,
+    "language": "ta",
+    "authors": [
+        "Redowan, NivinCNC"
+    ],
+    "tvTypes": [
+        "Movie",
+        "TvSeries",
+        "Anime",
+        "AnimeMovie",
+        "AsianDrama"
+    ],
+    "version": 36,
+    "internalName": "Rtally",
+    "description": "Movie and TV Series provider",
+    "url": "https://raw.githubusercontent.com/Subrata96411/CNCVerse-Cloud-Stream-Extension/builds/Rtally.cs3",
+    "name": "Rtally"
+}

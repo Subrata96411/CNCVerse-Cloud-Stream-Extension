@@ -1,0 +1,12 @@
+R_DEF: Internal format may change without notice
+local
+drawable outline
+drawable save_icon
+id header2_tw
+id header_tw
+id list
+id save_btn
+id settingsLayout
+layout settings
+string header2_tw
+string header_tw
