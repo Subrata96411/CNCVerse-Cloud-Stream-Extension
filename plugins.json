@@ -251,26 +251,6 @@
         "name": "HDrezkaProvider"
     },
     {
-        "iconUrl": "https://librivox.org/wp-content/themes/librivox/images/librivox-logo.png",
-        "fileHash": "sha256-38959c4e07fcfb95b446c22388ff2a60c9a7c1eb34970ec94aca2facd85f266b",
-        "apiVersion": 1,
-        "repositoryUrl": "https://github.com/Subrata96411/CNCVerse-Cloud-Stream-Extension",
-        "fileSize": 12651,
-        "status": 1,
-        "language": "en",
-        "authors": [
-            "KillerDogeEmpire, NivinCNC"
-        ],
-        "tvTypes": [
-            "Others"
-        ],
-        "version": 21,
-        "internalName": "LibriVoxAudiobook",
-        "description": "Audiobooks in public domain",
-        "url": "https://raw.githubusercontent.com/Subrata96411/CNCVerse-Cloud-Stream-Extension/builds/LibriVoxAudiobook.cs3",
-        "name": "LibriVoxAudiobook"
-    },
-    {
         "iconUrl": "https://mlsbd.co/wp-content/uploads/2020/08/MLSBD-Logo.png",
         "fileHash": "sha256-23688280316760eca3965104110801751296af7d51fbba2292ecb1396af0a9e7",
         "apiVersion": 1,
